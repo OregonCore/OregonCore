@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef _ITEMPROTOTYPE_H
@@ -619,15 +619,6 @@ struct ItemTemplate
         }
 
         return false;
-    }
-
-    bool HasSignature() const
-    {
-        return GetMaxStackSize() == 1 &&
-            Class != ITEM_CLASS_CONSUMABLE &&
-            Class != ITEM_CLASS_QUEST &&
-            ItemId != 6265 && /*Soul Shard*/
-            ItemId != 6948; /*Hearthstone*/
     }
 
     uint32 GetMaxStackSize() const

@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -50,7 +50,13 @@ enum ExarchMaladaar
     SPELL_STOLEN_SOUL_VISUAL    = 32395,
     SPELL_SUMMON_AVATAR         = 32424,
 
-    ENTRY_STOLEN_SOUL           = 18441
+    ENTRY_STOLEN_SOUL           = 18441,
+
+    EVENT_SPELL_FEAR = 1,
+    EVENT_SPELL_RIBBON = 2,
+    EVENT_SPELL_SOUL = 3,
+    EVENT_CHECK_HEALTH = 4,
+    EVENT_MORTALSTRIKE = 5
 };
 
 struct boss_exarch_maladaarAI : public ScriptedAI
@@ -60,33 +66,17 @@ struct boss_exarch_maladaarAI : public ScriptedAI
         HasTaunted = false;
     }
 
-    uint32 soulmodel;
-    uint64 soulholder;
-    uint8 soulclass;
-
-    uint32 Fear_timer;
-    uint32 Ribbon_of_Souls_timer;
-    uint32 StolenSoul_Timer;
-
     bool HasTaunted;
-    bool Avatar_summoned;
+    EventMap events;
 
     void Reset()
     {
-        soulmodel = 0;
-        soulholder = 0;
-        soulclass = 0;
-
-        Fear_timer = 15000 + rand() % 5000;
-        Ribbon_of_Souls_timer = 5000;
-        StolenSoul_Timer = 25000 + rand() % 10000;
-
-        Avatar_summoned = false;
+        events.Reset();
     }
 
     void MoveInLineOfSight(Unit* who)
     {
-        if (!HasTaunted && me->IsWithinDistInMap(who, 150.0f))
+        if (!HasTaunted && me->IsWithinDistInMap(who, 150.0f) && who->GetTypeId() == TYPEID_PLAYER)
         {
             DoScriptText(SAY_INTRO, me);
             HasTaunted = true;
@@ -98,52 +88,22 @@ struct boss_exarch_maladaarAI : public ScriptedAI
 
     void EnterCombat(Unit*)
     {
-        switch (rand() % 3)
-        {
-        case 0:
-            DoScriptText(SAY_AGGRO_1, me);
-            break;
-        case 1:
-            DoScriptText(SAY_AGGRO_2, me);
-            break;
-        case 2:
-            DoScriptText(SAY_AGGRO_3, me);
-            break;
-        }
-    }
 
-    void JustSummoned(Creature* summoned)
-    {
-        if (summoned->GetEntry() == ENTRY_STOLEN_SOUL)
-        {
-            //SPELL_STOLEN_SOUL_VISUAL has shapeshift effect, but not implemented feature in OREGON for this spell.
-            summoned->CastSpell(summoned, SPELL_STOLEN_SOUL_VISUAL, false);
-            summoned->SetDisplayId(soulmodel);
-            summoned->SetFaction(me->GetFaction());
+        DoScriptText(RAND(SAY_AGGRO_1, SAY_AGGRO_2, SAY_AGGRO_3), me);
 
-            if (Unit* pTarget = Unit::GetUnit(*me, soulholder))
-            {
+        events.ScheduleEvent(EVENT_SPELL_FEAR, 15000);
+        events.ScheduleEvent(EVENT_SPELL_RIBBON, 5000);
+        events.ScheduleEvent(EVENT_SPELL_SOUL, 25000);
+        events.ScheduleEvent(EVENT_CHECK_HEALTH, 5000);
 
-                //((mob_stolen_soulAI*)summoned->AI())->SetMyClass(soulclass);
-                summoned->AI()->AttackStart(pTarget);
-            }
-        }
     }
 
     void KilledUnit(Unit*)
     {
+
+        DoScriptText(RAND(SAY_SLAY_1, SAY_SLAY_2), me);
         if (rand() % 2)
             return;
-
-        switch (rand() % 2)
-        {
-        case 0:
-            DoScriptText(SAY_SLAY_1, me);
-            break;
-        case 1:
-            DoScriptText(SAY_SLAY_2, me);
-            break;
-        }
     }
 
     void JustDied(Unit*)
@@ -158,62 +118,46 @@ struct boss_exarch_maladaarAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (!Avatar_summoned && ((me->GetHealth() * 100) / me->GetMaxHealth() < 25))
+        events.Update(diff);
+        if (me->HasUnitState(UNIT_STATE_CASTING))
+            return;
+
+        switch (events.ExecuteEvent())
         {
-            if (me->IsNonMeleeSpellCast(false))
-                me->InterruptNonMeleeSpells(true);
-
-            DoScriptText(SAY_SUMMON, me);
-
-            DoCast(me, SPELL_SUMMON_AVATAR);
-            Avatar_summoned = true;
-            StolenSoul_Timer = 15000 + rand() % 15000;
-        }
-
-        if (StolenSoul_Timer <= diff)
-        {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+        case EVENT_CHECK_HEALTH:
+            if (HealthBelowPct(25))
             {
-                if (pTarget->GetTypeId() == TYPEID_PLAYER)
-                {
-                    if (me->IsNonMeleeSpellCast(false))
-                        me->InterruptNonMeleeSpells(true);
-
-                    uint32 i = urand(1, 2);
-                    if (i == 1)
-                        DoScriptText(SAY_ROAR, me);
-                    else
-                        DoScriptText(SAY_SOUL_CLEAVE, me);
-
-                    soulmodel = pTarget->GetDisplayId();
-                    soulholder = pTarget->GetGUID();
-                    soulclass = pTarget->getClass();
-
-                    DoCast(pTarget, SPELL_STOLEN_SOUL);
-                    DoSpawnCreature(ENTRY_STOLEN_SOUL, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
-
-                    StolenSoul_Timer = 20000 + rand() % 10000;
-                }
-                else StolenSoul_Timer = 1000;
+                DoScriptText(SAY_SUMMON, me);
+                me->CastSpell(me, SPELL_SUMMON_AVATAR, false);
+                return;
             }
+            events.Repeat(2000);
+            break;
+        case EVENT_SPELL_SOUL:
+            if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true))
+            {
+                DoScriptText(SAY_ROAR, me);
+                me->CastSpell(target, SPELL_STOLEN_SOUL, false);
+                if (Creature* summon = me->SummonCreature(ENTRY_STOLEN_SOUL, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000))
+                {
+                    summon->CastSpell(summon, SPELL_STOLEN_SOUL_VISUAL, false);
+                    summon->SetDisplayId(target->GetDisplayId());
+                    summon->AI()->DoAction(target->getClass());
+                    summon->AI()->AttackStart(target);
+                }
+            }
+            events.Repeat(urand(25000, 30000));
+            break;
+        case EVENT_SPELL_RIBBON:
+            if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
+                me->CastSpell(target, SPELL_RIBBON_OF_SOULS, false);
+            events.Repeat(urand(10000, 20000));
+            break;
+        case EVENT_SPELL_FEAR:
+            me->CastSpell(me, SPELL_SOUL_SCREAM, false);
+            events.Repeat(urand(15000, 25000));
+            break;
         }
-        else StolenSoul_Timer -= diff;
-
-        if (Ribbon_of_Souls_timer <= diff)
-        {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(pTarget, SPELL_RIBBON_OF_SOULS);
-
-            Ribbon_of_Souls_timer = 5000 + (rand() % 20 * 1000);
-        }
-        else Ribbon_of_Souls_timer -= diff;
-
-        if (Fear_timer <= diff)
-        {
-            DoCast(me, SPELL_SOUL_SCREAM);
-            Fear_timer = 15000 + rand() % 15000;
-        }
-        else Fear_timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -232,14 +176,13 @@ struct mob_avatar_of_martyredAI : public ScriptedAI
     mob_avatar_of_martyredAI(Creature* c) : ScriptedAI(c) {}
 
     uint32 Mortal_Strike_timer;
+    EventMap events;
 
-    void Reset()
-    {
-        Mortal_Strike_timer = 10000;
-    }
+    void Reset() {}
 
     void EnterCombat(Unit*)
     {
+        Mortal_Strike_timer = 10000;
     }
 
     void UpdateAI(const uint32 diff)
@@ -247,13 +190,15 @@ struct mob_avatar_of_martyredAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (Mortal_Strike_timer <= diff)
-        {
-            DoCastVictim( SPELL_AV_MORTAL_STRIKE);
-            Mortal_Strike_timer = 10000 + rand() % 20 * 1000;
-        }
-        else Mortal_Strike_timer -= diff;
+        events.Update(diff);
 
+        switch (events.ExecuteEvent())
+        {
+        case EVENT_MORTALSTRIKE:
+            DoCastVictim(SPELL_AV_MORTAL_STRIKE);
+            events.Repeat(10000 + rand() % 20 * 1000);
+            break;
+        }
         DoMeleeAttackIfReady();
     }
 };
@@ -265,15 +210,17 @@ CreatureAI* GetAI_mob_avatar_of_martyred(Creature* pCreature)
 
 enum stolenSoul
 {
-	SPELL_MOONFIRE				= 37328,
-	SPELL_FIREBALL				= 37329,
-	SPELL_MIND_FLAY				= 37330,
-	SPELL_HEMORRHAGE			= 37331,
-	SPELL_FROSTSHOCK			= 37332,
-	SPELL_CURSE_OF_AGONY		= 37334,
-	SPELL_MORTAL_STRIKE			= 37335,
-	SPELL_FREEZING_TRAP			= 37368,
-	SPELL_HAMMER_OF_JUSTICE		= 37369
+    SPELL_MOONFIRE = 37328,
+    SPELL_FIREBALL = 37329,
+    SPELL_MIND_FLAY = 37330,
+    SPELL_HEMORRHAGE = 37331,
+    SPELL_FROSTSHOCK = 37332,
+    SPELL_CURSE_OF_AGONY = 37334,
+    SPELL_MORTAL_STRIKE = 37335,
+    SPELL_FREEZING_TRAP = 37368,
+    SPELL_HAMMER_OF_JUSTICE = 37369,
+
+    EVENT_STOLEN_SOUL_SPELL = 1,
 };
 
 struct mob_stolen_soulAI : public ScriptedAI
@@ -281,12 +228,12 @@ struct mob_stolen_soulAI : public ScriptedAI
     mob_stolen_soulAI(Creature* c) : ScriptedAI(c) {}
 
     uint8 myClass;
-    uint32 Class_Timer;
+    EventMap events;
 
     void Reset()
     {
         myClass = CLASS_WARRIOR;
-        Class_Timer = 1000;
+        events.ScheduleEvent(EVENT_STOLEN_SOUL_SPELL, 1000);
     }
 
     void EnterCombat(Unit*) { }
@@ -301,49 +248,48 @@ struct mob_stolen_soulAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (Class_Timer <= diff)
+        if (events.ExecuteEvent() == EVENT_STOLEN_SOUL_SPELL)
         {
             switch (myClass)
             {
-                case CLASS_WARRIOR:
-                    DoCastVictim( SPELL_MORTAL_STRIKE);
-                    Class_Timer = 6000;
-                    break;
-                case CLASS_PALADIN:
-                    DoCastVictim( SPELL_HAMMER_OF_JUSTICE);
-                    Class_Timer = 6000;
-                    break;
-                case CLASS_HUNTER:
-                    DoCastVictim( SPELL_FREEZING_TRAP);
-                    Class_Timer = 20000;
-                    break;
-                case CLASS_ROGUE:
-                    DoCastVictim( SPELL_HEMORRHAGE);
-                    Class_Timer = 10000;
-                    break;
-                case CLASS_PRIEST:
-                    DoCastVictim( SPELL_MIND_FLAY);
-                    Class_Timer = 5000;
-                    break;
-                case CLASS_SHAMAN:
-                    DoCastVictim( SPELL_FROSTSHOCK);
-                    Class_Timer = 8000;
-                    break;
-                case CLASS_MAGE:
-                    DoCastVictim( SPELL_FIREBALL);
-                    Class_Timer = 5000;
-                    break;
-                case CLASS_WARLOCK:
-                    DoCastVictim( SPELL_CURSE_OF_AGONY);
-                    Class_Timer = 20000;
-                    break;
-                case CLASS_DRUID:
-                    DoCastVictim( SPELL_MOONFIRE);
-                    Class_Timer = 10000;
-                    break;
+            case CLASS_WARRIOR:
+                me->CastSpell(me->GetVictim(), SPELL_MORTAL_STRIKE, false);
+                events.Repeat(6000);
+                break;
+            case CLASS_PALADIN:
+                me->CastSpell(me->GetVictim(), SPELL_HAMMER_OF_JUSTICE, false);
+                events.Repeat(6000);
+                break;
+            case CLASS_HUNTER:
+                me->CastSpell(me->GetVictim(), SPELL_FREEZING_TRAP, false);
+                events.Repeat(20000);
+                break;
+            case CLASS_ROGUE:
+                me->CastSpell(me->GetVictim(), SPELL_HEMORRHAGE, false);
+                events.Repeat(10000);
+                break;
+            case CLASS_PRIEST:
+                me->CastSpell(me->GetVictim(), SPELL_MIND_FLAY, false);
+                events.Repeat(5000);
+                break;
+            case CLASS_SHAMAN:
+                me->CastSpell(me->GetVictim(), SPELL_FROSTSHOCK, false);
+                events.Repeat(8000);
+                break;
+            case CLASS_MAGE:
+                me->CastSpell(me->GetVictim(), SPELL_FIREBALL, false);
+                events.Repeat(5000);
+                break;
+            case CLASS_WARLOCK:
+                me->CastSpell(me->GetVictim(), SPELL_CURSE_OF_AGONY, false);
+                events.Repeat(20000);
+                break;
+            case CLASS_DRUID:
+                me->CastSpell(me->GetVictim(), SPELL_MOONFIRE, false);
+                events.Repeat(10000);
+                break;
             }
         }
-        else Class_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }

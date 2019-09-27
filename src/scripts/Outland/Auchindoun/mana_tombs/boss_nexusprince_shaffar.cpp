@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -31,16 +31,12 @@ EndContentData */
 #include "ScriptedCreature.h"
 
 #define SAY_INTRO                       -1557000
-
 #define SAY_AGGRO_1                     -1557001
 #define SAY_AGGRO_2                     -1557002
 #define SAY_AGGRO_3                     -1557003
-
 #define SAY_SLAY_1                      -1557004
 #define SAY_SLAY_2                      -1557005
-
 #define SAY_SUMMON                      -1557006
-
 #define SAY_DEAD                        -1557007
 
 #define SPELL_BLINK                     34605
@@ -56,199 +52,120 @@ EndContentData */
 
 #define NR_INITIAL_BEACONS              3
 
+enum events
+{
+    EVENT_SPELL_BEACON = 1,
+    EVENT_SPELL_FR_FI = 2,
+    EVENT_SPELL_FROST_NOVA = 3,
+    EVENT_SPELL_BLINK = 4,
+};
+
 struct boss_nexusprince_shaffarAI : public ScriptedAI
 {
-    boss_nexusprince_shaffarAI(Creature* c) : ScriptedAI(c) {}
+    boss_nexusprince_shaffarAI(Creature* c) : ScriptedAI(c), summons(me) {}
 
-    uint32 Blink_Timer;
-    uint32 Beacon_Timer;
-    uint32 FireBall_Timer;
-    uint32 Frostbolt_Timer;
-    uint32 FrostNova_Timer;
-
-    Creature* Beacon[NR_INITIAL_BEACONS];
-
+    SummonList summons;
+    EventMap events;
     bool HasTaunted;
-    bool CanBlink;
-
-    void RemoveBeaconFromList(Creature* targetBeacon)
-    {
-        for (uint8 i = 0; i < NR_INITIAL_BEACONS; i++)
-            if (Beacon[i] && Beacon[i]->GetGUID() == targetBeacon->GetGUID())
-                Beacon[i] = NULL;
-    }
 
     void Reset()
     {
-        Blink_Timer = 1500;
-        Beacon_Timer = 10000;
-        FireBall_Timer = 8000;
-        Frostbolt_Timer = 4000;
-        FrostNova_Timer = 15000;
-
         HasTaunted = false;
-        CanBlink = false;
 
         float dist = 8.0f;
         float posX, posY, posZ, angle;
         me->GetHomePosition(posX, posY, posZ, angle);
-
-        Beacon[0] = me->SummonCreature(ENTRY_BEACON, posX - dist, posY - dist, posZ, angle, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 7200000);
-        Beacon[1] = me->SummonCreature(ENTRY_BEACON, posX - dist, posY + dist, posZ, angle, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 7200000);
-        Beacon[2] = me->SummonCreature(ENTRY_BEACON, posX + dist, posY, posZ, angle, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 7200000);
-
-        for (uint8 i = 0; i < NR_INITIAL_BEACONS; i++)
-        {
-            if (Beacon[i])
-                Beacon[i]->CastSpell(Beacon[i], SPELL_ETHEREAL_BEACON_VISUAL, false);
-        }
-    }
-
-    void EnterEvadeMode()
-    {
-        //Despawn still living initial beacons.
-        for (uint8 i = 0; i < NR_INITIAL_BEACONS; i++)
-        {
-            if (Beacon[i] && Beacon[i]->IsAlive())
-            {
-                Beacon[i]->RemoveAllAuras();
-                Beacon[i]->CombatStop();
-                Beacon[i]->StopMoving();
-                Beacon[i]->Kill(Beacon[i]);
-            }
-        }
-        ScriptedAI::EnterEvadeMode();
+        summons.DespawnAll();
+        events.Reset();
+        me->SummonCreature(ENTRY_BEACON, posX - dist, posY - dist, posZ, angle, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 7200000);
+        me->SummonCreature(ENTRY_BEACON, posX - dist, posY + dist, posZ, angle, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 7200000);
+        me->SummonCreature(ENTRY_BEACON, posX + dist, posY, posZ, angle, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 7200000);
     }
 
     void MoveInLineOfSight(Unit* who)
     {
-        if (!me->GetVictim() && who->isTargetableForAttack() && (me->IsHostileTo(who)) && who->isInAccessiblePlaceFor (me))
+        if (!HasTaunted && who->GetTypeId() == TYPEID_PLAYER && me->IsWithinDistInMap(who, 100.0f))
         {
-            if (!HasTaunted && me->IsWithinDistInMap(who, 100.0f))
-            {
-                DoScriptText(SAY_INTRO, me);
-                HasTaunted = true;
-            }
-
-            if (!me->CanFly() && me->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
-                return;
-
-            float attackRadius = me->GetAttackDistance(who);
-            if (me->IsWithinDistInMap(who, attackRadius) && me->IsWithinLOSInMap(who))
-            {
-                //who->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
-                AttackStart(who);
-            }
+            DoScriptText(SAY_INTRO, me);
+            HasTaunted = true;
         }
     }
 
     void EnterCombat(Unit* who)
     {
-        switch (rand() % 3)
-        {
-        case 0:
-            DoScriptText(SAY_AGGRO_1, me);
-            break;
-        case 1:
-            DoScriptText(SAY_AGGRO_2, me);
-            break;
-        case 2:
-            DoScriptText(SAY_AGGRO_3, me);
-            break;
-        }
 
-        // Send initial beacons to join the fight if not already
-        for (uint8 i = 0; i < NR_INITIAL_BEACONS; i++)
-            if (Beacon[i] && Beacon[i]->IsAlive() && !Beacon[i]->IsInCombat())
-                Beacon[i]->AI()->AttackStart(who);
+        DoScriptText(RAND(SAY_AGGRO_1, SAY_AGGRO_2, SAY_AGGRO_3), me);
+        me->SetInCombatWithZone();
+        summons.DoZoneInCombat();
+
+        events.ScheduleEvent(EVENT_SPELL_BEACON, 10000);
+        events.ScheduleEvent(EVENT_SPELL_FR_FI, 4000);
+        events.ScheduleEvent(EVENT_SPELL_FROST_NOVA, 15000);
     }
 
-    void JustSummoned(Creature* summoned)
+    void JustSummoned(Creature* summon)
     {
-        if (summoned->GetEntry() == ENTRY_BEACON)
+        if (summon->GetEntry() == ENTRY_BEACON)
         {
-            summoned->CastSpell(summoned, SPELL_ETHEREAL_BEACON_VISUAL, false);
+            summon->CastSpell(summon, SPELL_ETHEREAL_BEACON_VISUAL, false);
 
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                summoned->AI()->AttackStart(pTarget);
+            if (me->IsInCombat())
+                if (Unit* target = SelectTargetFromPlayerList(50.0f, NULL, true))
+                    summon->AI()->AttackStart(target);
         }
+
+        summons.Summon(summon);
     }
 
-    void KilledUnit(Unit*)
+    void SummonedCreatureDespawn(Creature* summon)
     {
-        switch (rand() % 2)
+        summons.Despawn(summon);
+    }
+
+    void KilledUnit(Unit* victim)
+    {
+        if (victim->GetTypeId() == TYPEID_PLAYER)
         {
-        case 0:
-            DoScriptText(SAY_SLAY_1, me);
-            break;
-        case 1:
-            DoScriptText(SAY_SLAY_2, me);
-            break;
+            DoScriptText(RAND(SAY_SLAY_1, SAY_SLAY_2), me);
         }
     }
 
     void JustDied(Unit*)
     {
         DoScriptText(SAY_DEAD, me);
+        summons.DespawnAll();
     }
 
     void UpdateAI(const uint32 diff)
     {
         if (!UpdateVictim())
             return;
-
-        if (FrostNova_Timer <= diff)
+        
+        events.Update(diff);
+        switch (events.ExecuteEvent())
         {
-            if (me->IsNonMeleeSpellCast(false))
-                me->InterruptNonMeleeSpells(true);
-
-            DoCast(me, SPELL_FROSTNOVA);
-            FrostNova_Timer  = 17500 + rand() % 7500;
-            CanBlink = true;
-        }
-        else FrostNova_Timer -= diff;
-
-        if (Frostbolt_Timer <= diff)
-        {
-            DoCastVictim(SPELL_FROSTBOLT);
-            Frostbolt_Timer = 4500 + rand() % 1500;
-        }
-        else Frostbolt_Timer -= diff;
-
-        if (FireBall_Timer <= diff)
-        {
-            DoCastVictim(SPELL_FIREBALL);
-            FireBall_Timer = 4500 + rand() % 1500;
-        }
-        else FireBall_Timer -= diff;
-
-        if (CanBlink)
-        {
-            if (Blink_Timer <= diff)
-            {
-                if (me->IsNonMeleeSpellCast(false))
-                    me->InterruptNonMeleeSpells(true);
-
-                DoCast(me, SPELL_BLINK);
-                Blink_Timer = 1000 + rand() % 1500;
-                CanBlink = false;
-            }
-            else Blink_Timer -= diff;
-        }
-
-        if (Beacon_Timer <= diff)
-        {
-            if (me->IsNonMeleeSpellCast(false))
-                me->InterruptNonMeleeSpells(true);
-
+        case EVENT_SPELL_FROST_NOVA:
+            me->CastSpell(me, SPELL_FROSTNOVA, false);
+            events.Repeat(urand(16000, 23000));
+            events.DelayEvents(1500);
+            events.ScheduleEvent(EVENT_SPELL_BLINK, 1500);
+            break;
+        case EVENT_SPELL_FR_FI:
+            me->CastSpell(me->GetVictim(), RAND(SPELL_FROSTBOLT, SPELL_FIREBALL), false);
+            events.Repeat(urand(3000, 4000));
+            break;
+        case EVENT_SPELL_BLINK:
+            me->CastSpell(me, SPELL_BLINK, false);
+            events.RescheduleEvent(EVENT_SPELL_FR_FI, 0);
+            break;
+        case EVENT_SPELL_BEACON:
             if (!urand(0, 3))
                 DoScriptText(SAY_SUMMON, me);
 
-            DoCast(me, SPELL_ETHEREAL_BEACON);
-
-            Beacon_Timer = 10000;
+            me->CastSpell(me, SPELL_ETHEREAL_BEACON, true);
+            events.Repeat(10000);
+            break;
         }
-        else Beacon_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -302,12 +219,6 @@ struct mob_ethereal_beaconAI : public ScriptedAI
     void JustSummoned(Creature* summoned)
     {
         summoned->AI()->AttackStart(me->GetVictim());
-    }
-
-    void JustDied(Unit*)
-    {
-        if (Creature* Shaffar = me->FindNearestCreature(ENTRY_SHAFFAR, 100))
-            ((boss_nexusprince_shaffarAI*)(CAST_CRE(Shaffar)->AI()))->RemoveBeaconFromList(me);
     }
 
     void UpdateAI(const uint32 diff)

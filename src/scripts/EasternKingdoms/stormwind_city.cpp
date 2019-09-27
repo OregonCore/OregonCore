@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -448,7 +448,7 @@ struct npc_lord_gregor_lescovarAI : public npc_escortAI
         cell.SetNoCreate();
 
         Oregon::AllCreaturesOfEntryInRange check(me, NPC_STORMWIND_ROYAL, 10);
-        Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(me, lCreatureList, check);
+        Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(lCreatureList, check);
         TypeContainerVisitor<Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange>, GridTypeMapContainer> cSearcher(searcher);
         cell.Visit(pair, cSearcher, *(me->GetMap()), *me, me->GetGridActivationRange());
 
@@ -672,7 +672,7 @@ struct npc_tyrion_spybotAI : public npc_escortAI
         cell.SetNoCreate();
 
         Oregon::AllCreaturesOfEntryInRange check(me, NPC_STORMWIND_ROYAL, 10);
-        Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(me, lCreatureList, check);
+        Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(lCreatureList, check);
         TypeContainerVisitor<Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange>, GridTypeMapContainer> cSearcher(searcher);
         cell.Visit(pair, cSearcher, *(me->GetMap()), *me, me->GetGridActivationRange());
 
@@ -822,13 +822,13 @@ void AddSC_stormwind_city()
     newscript = new Script;
     newscript->Name = "npc_bartleby";
     newscript->GetAI = &GetAI_npc_bartleby;
-    newscript->QuestAccept = &QuestAccept_npc_bartleby;
+    newscript->pQuestAccept = &QuestAccept_npc_bartleby;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "npc_dashel_stonefist";
     newscript->GetAI = &GetAI_npc_dashel_stonefist;
-    newscript->QuestAccept = &QuestAccept_npc_dashel_stonefist;
+    newscript->pQuestAccept = &QuestAccept_npc_dashel_stonefist;
     newscript->RegisterSelf();
 
     newscript = new Script;
@@ -844,7 +844,7 @@ void AddSC_stormwind_city()
 
     newscript = new Script;
     newscript->Name = "npc_tyrion";
-    newscript->QuestAccept = &QuestAccept_npc_tyrion;
+    newscript->pQuestAccept = &QuestAccept_npc_tyrion;
     newscript->RegisterSelf();
 
     newscript = new Script;

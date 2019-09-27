@@ -1,0 +1,1 @@
+UPDATE `gameobject_template` SET `faction` = 14 WHERE `entry` = 179784;

@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -577,7 +577,7 @@ struct npc_geezleAI : public ScriptedAI
         float radius = 50.0f;
         std::list<Player*> players;
         Oregon::AnyPlayerInObjectRangeCheck checker(me, radius);
-        Oregon::PlayerListSearcher<Oregon::AnyPlayerInObjectRangeCheck> searcher(me, players, checker);
+        Oregon::PlayerListSearcher<Oregon::AnyPlayerInObjectRangeCheck> searcher(players, checker);
         me->VisitNearbyWorldObject(radius, searcher);
 
         for (std::list<Player*>::const_iterator itr = players.begin(); itr != players.end(); ++itr)
@@ -839,7 +839,7 @@ void AddSC_azuremyst_isle()
     newscript = new Script;
     newscript->Name = "npc_magwin";
     newscript->GetAI = &GetAI_npc_magwinAI;
-    newscript->QuestAccept = &QuestAccept_npc_magwin;
+    newscript->pQuestAccept = &QuestAccept_npc_magwin;
     newscript->RegisterSelf();
 
     newscript = new Script;

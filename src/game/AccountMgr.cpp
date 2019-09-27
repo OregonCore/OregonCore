@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Database/DatabaseEnv.h"
@@ -48,7 +48,7 @@ AccountOpResult AccountMgr::CreateAccount(std::string username, std::string pass
 
     if (!LoginDatabase.PExecute("INSERT INTO account(username,sha_pass_hash,joindate, expansion) VALUES('%s',SHA1(CONCAT('%s',':','%s')),NOW(), 1)", username.c_str(), username.c_str(), password.c_str()))
         return AOR_DB_INTERNAL_ERROR;                       // unexpected error
-    
+
     LoginDatabase.Execute("INSERT INTO realmcharacters (realmid, acctid, numchars) SELECT realmlist.id, account.id, 0 FROM realmlist,account LEFT JOIN realmcharacters ON acctid=account.id WHERE acctid IS NULL");
 
     return AOR_OK;                                          // everything's fine

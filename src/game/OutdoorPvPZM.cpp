@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "OutdoorPvPZM.h"
@@ -361,7 +361,7 @@ bool OPvPCapturePointZM_GraveYard::HandleGossipOption(Player* plr, uint64 guid, 
             m_FlagCarrierGUID = plr->GetGUID();
         }
         UpdateTowerState();
-        plr->PlayerTalkClass->SendCloseGossip();
+        plr->PlayerTalkClass->CloseGossip();
         return true;
     }
     return false;

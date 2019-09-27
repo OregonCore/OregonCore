@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -195,7 +195,7 @@ void AddSC_tirisfal_glades()
     newscript = new Script;
     newscript->Name = "npc_calvin_montague";
     newscript->GetAI = &GetAI_npc_calvin_montague;
-    newscript->QuestAccept = &QuestAccept_npc_calvin_montague;
+    newscript->pQuestAccept = &QuestAccept_npc_calvin_montague;
     newscript->RegisterSelf();
 
     newscript = new Script;

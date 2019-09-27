@@ -1,1 +1,0 @@
-DELETE FROM npc_vendor WHERE entry = 2366 AND item = 21151;

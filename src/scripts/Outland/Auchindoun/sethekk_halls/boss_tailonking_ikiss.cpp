@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -52,36 +52,34 @@ EndScriptData */
 #define SPELL_ARCANE_EXPLOSION      38197
 #define H_SPELL_ARCANE_EXPLOSION    40425
 
+enum events
+{
+    EVENT_SPELL_BLINK = 1,
+    EVENT_SPELL_POLYMORPH = 2,
+    EVENT_SPELL_SLOW = 3,
+    EVENT_SPELL_ARCANE_VOLLEY = 4,
+    EVENT_SPELL_ARCANE_EXPLO = 5,
+    EVENT_HEALTH_CHECK = 6,
+    EVENT_SPELL_BLINK_2 = 7
+};
+
 struct boss_talon_king_ikissAI : public ScriptedAI
 {
     boss_talon_king_ikissAI(Creature* c) : ScriptedAI(c)
     {
-        pInstance = (ScriptedInstance*)c->GetInstanceData();
-        HeroicMode = me->GetMap()->IsHeroic();
+        IsHeroic = me->GetMap()->IsHeroic();
+        pInstance =(ScriptedInstance*)c->GetInstanceData();
     }
 
     ScriptedInstance* pInstance;
+    EventMap events;
+    bool spoken;
+    bool IsHeroic;
 
-    bool HeroicMode;
-
-    uint32 ArcaneVolley_Timer;
-    uint32 Sheep_Timer;
-    uint32 Blink_Timer;
-    uint32 Slow_Timer;
-
-    bool ManaShield;
-    bool Blink;
-    bool Intro;
 
     void Reset()
     {
-        ArcaneVolley_Timer = 5000;
-        Sheep_Timer = 8000;
-        Blink_Timer = 35000;
-        Slow_Timer = 15000 + rand() % 15000;
-        Blink = false;
-        Intro = false;
-        ManaShield = false;
+        spoken = false;
 
         if (pInstance)
             pInstance->SetData(DATA_IKISSEVENT, NOT_STARTED);
@@ -89,43 +87,28 @@ struct boss_talon_king_ikissAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit* who)
     {
-        if (!me->GetVictim() && who->isTargetableForAttack() && (me->IsHostileTo(who)) && who->isInAccessiblePlaceFor (me))
+        if (!spoken && who->GetTypeId() == TYPEID_PLAYER && who->IsAlive())
         {
-            if (!Intro && me->IsWithinDistInMap(who, 100))
-            {
-                Intro = true;
-                DoScriptText(SAY_INTRO, me);
-            }
+            DoScriptText(SAY_INTRO, me);
+            spoken = true;
 
-            if (!me->CanFly() && me->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
-                return;
-
-            float attackRadius = me->GetAttackDistance(who);
-            if (me->IsWithinDistInMap(who, attackRadius) && me->IsWithinLOSInMap(who))
-            {
-                //who->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
-                AttackStart(who);
-            }
+            ScriptedAI::MoveInLineOfSight(who);
         }
     }
 
     void EnterCombat(Unit*)
     {
-        switch (rand() % 3)
-        {
-        case 0:
-            DoScriptText(SAY_AGGRO_1, me);
-            break;
-        case 1:
-            DoScriptText(SAY_AGGRO_2, me);
-            break;
-        case 2:
-            DoScriptText(SAY_AGGRO_3, me);
-            break;
-        }
+        DoScriptText(RAND(SAY_AGGRO_1, SAY_AGGRO_2, SAY_AGGRO_3), me);
 
         if (pInstance)
             pInstance->SetData(DATA_IKISSEVENT, IN_PROGRESS);
+
+        events.ScheduleEvent(EVENT_SPELL_BLINK, 35000);
+        events.ScheduleEvent(EVENT_SPELL_ARCANE_VOLLEY, 5000);
+        events.ScheduleEvent(EVENT_SPELL_POLYMORPH, 8000);
+        events.ScheduleEvent(EVENT_HEALTH_CHECK, 2000);
+        if (me->GetMap()->IsHeroic())
+            events.ScheduleEvent(EVENT_SPELL_SLOW, urand(15000, 25000));
     }
 
     void JustDied(Unit*)
@@ -138,15 +121,7 @@ struct boss_talon_king_ikissAI : public ScriptedAI
 
     void KilledUnit(Unit*)
     {
-        switch (rand() % 2)
-        {
-        case 0:
-            DoScriptText(SAY_SLAY_1, me);
-            break;
-        case 1:
-            DoScriptText(SAY_SLAY_2, me);
-            break;
-        }
+        DoScriptText(RAND(SAY_SLAY_1, SAY_SLAY_2), me);
     }
 
     void UpdateAI(const uint32 diff)
@@ -154,75 +129,56 @@ struct boss_talon_king_ikissAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (Blink)
-        {
-            DoCast(me, HeroicMode ? H_SPELL_ARCANE_EXPLOSION : SPELL_ARCANE_EXPLOSION);
-            me->CastSpell(me, SPELL_ARCANE_BUBBLE, true);
-            Blink = false;
-        }
+        events.Update(diff);
+        if (me->HasUnitState(UNIT_STATE_CASTING))
+            return;
 
-        if (ArcaneVolley_Timer <= diff)
-        {
-            DoCast(me, HeroicMode ? H_SPELL_ARCANE_VOLLEY : SPELL_ARCANE_VOLLEY);
-            ArcaneVolley_Timer = 10000 + rand() % 5000;
-        }
-        else ArcaneVolley_Timer -= diff;
 
-        if (Sheep_Timer <= diff)
+        switch (events.ExecuteEvent())
         {
-            //second top aggro target in normal, random target in heroic correct?
-            Unit* pTarget = NULL;
-            pTarget = HeroicMode ? SelectUnit(SELECT_TARGET_RANDOM, 0) : SelectUnit(SELECT_TARGET_TOPAGGRO, 1);
-            if (pTarget)
-                DoCast(pTarget, HeroicMode ? H_SPELL_POLYMORPH : SPELL_POLYMORPH);
-            Sheep_Timer = 15000 + rand() % 2500;
-        }
-        else Sheep_Timer -= diff;
-
-        //may not be correct time to cast
-        if (!ManaShield && ((me->GetHealth() * 100) / me->GetMaxHealth() < 20))
-        {
-            DoCast(me, SPELL_MANA_SHIELD);
-            ManaShield = true;
-        }
-
-        if (HeroicMode)
-        {
-            if (Slow_Timer <= diff)
+        case EVENT_SPELL_ARCANE_VOLLEY:
+            me->CastSpell(me, IsHeroic ? H_SPELL_ARCANE_VOLLEY : SPELL_ARCANE_VOLLEY, false);
+            events.ScheduleEvent(EVENT_SPELL_ARCANE_VOLLEY, urand(7000, 12000));
+            break;
+        case EVENT_SPELL_POLYMORPH:
+            if (Unit* target = (IsHeroic? SelectTarget(SELECT_TARGET_RANDOM, 0) : SelectTarget(SELECT_TARGET_TOPAGGRO, 1)))
+                me->CastSpell(target, IsHeroic? H_SPELL_POLYMORPH :SPELL_POLYMORPH, false);
+            events.ScheduleEvent(EVENT_SPELL_POLYMORPH, urand(15000, 17500));
+            break;
+        case EVENT_SPELL_SLOW:
+            me->CastSpell(me, H_SPELL_SLOW, false);
+            events.ScheduleEvent(EVENT_SPELL_SLOW, urand(15000, 30000));
+            break;
+        case EVENT_HEALTH_CHECK:
+            if (me->HealthBelowPct(20))
             {
-                DoCast(me, H_SPELL_SLOW);
-                Slow_Timer = 15000 + rand() % 25000;
+                me->CastSpell(me, SPELL_MANA_SHIELD, false);
+                events.ExecuteEvent();
+                return;
             }
-            else Slow_Timer -= diff;
-        }
-
-        if (Blink_Timer <= diff)
-        {
+            events.Repeat(1000);
+            break;
+        case EVENT_SPELL_BLINK:
             DoScriptText(EMOTE_ARCANE_EXP, me);
-
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
             {
-                if (me->IsNonMeleeSpellCast(false))
-                    me->InterruptNonMeleeSpells(false);
+                me->CastSpell(target, SPELL_BLINK, false);
+                me->NearTeleportTo(target->GetPositionX(), target->GetPositionY(), target->GetPositionZ(), target->GetOrientation());
 
-                //Spell doesn't work, but we use for visual effect at least
-                DoCast(pTarget, SPELL_BLINK);
-
-                float X = pTarget->GetPositionX();
-                float Y = pTarget->GetPositionY();
-                float Z = pTarget->GetPositionZ();
-
-                DoTeleportTo(X, Y, Z);
-
-                DoCast(pTarget, SPELL_BLINK_TELEPORT);
-                Blink = true;
+                DoCast(target, SPELL_BLINK_TELEPORT);
             }
-            Blink_Timer = 35000 + rand() % 5000;
+            events.Repeat(urand(35000, 40000));
+            events.DelayEvents(500);
+            events.ScheduleEvent(EVENT_SPELL_BLINK_2, 0);
+            return;
+        case EVENT_SPELL_BLINK_2:
+            me->CastSpell(me, IsHeroic? H_SPELL_ARCANE_EXPLOSION : SPELL_ARCANE_EXPLOSION, false);
+            me->CastSpell(me, SPELL_ARCANE_BUBBLE, true);
+            events.ExecuteEvent();
+            break;
         }
-        else Blink_Timer -= diff;
 
-        if (!Blink)
-            DoMeleeAttackIfReady();
+        DoMeleeAttackIfReady();
     }
 };
 

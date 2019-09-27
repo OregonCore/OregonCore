@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "MotionMaster.h"
@@ -51,7 +51,7 @@ MotionMaster::Initialize()
 // set new default movement generator
 void MotionMaster::InitDefault()
 {
-    if (i_owner->GetTypeId() == TYPEID_UNIT)
+    if (i_owner->GetTypeId() == TYPEID_UNIT && i_owner->IsAlive())
     {
         MovementGenerator* movement = FactorySelector::selectMovementGenerator(i_owner->ToCreature());
         Mutate(movement == NULL ? &si_idleMovement : movement, MOTION_SLOT_IDLE);
@@ -67,17 +67,24 @@ MotionMaster::~MotionMaster()
     {
         MovementGenerator* curr = top();
         pop();
-        if (curr) DirectDelete(curr);
+        if (curr && !isStatic(curr))
+            DirectDelete(curr);
     }
 }
 
 void
 MotionMaster::UpdateMotion(uint32 diff)
 {
+    if (!i_owner)
+        return;
+
     if (i_owner->HasUnitState(UNIT_STATE_ROOT | UNIT_STATE_STUNNED))
         return;
+
     ASSERT(!empty());
+
     m_cleanFlag |= MMCF_UPDATE;
+
     if (!top()->Update(*i_owner, diff))
     {
         m_cleanFlag &= ~MMCF_UPDATE;
@@ -118,6 +125,9 @@ MotionMaster::DirectClean(bool reset)
         if (curr) DirectDelete(curr);
     }
 
+    if (empty())
+        return;
+
     if (needInitTop())
         InitTop();
     else if (reset)
@@ -143,7 +153,7 @@ MotionMaster::DirectExpire(bool reset)
     {
         MovementGenerator* curr = top();
         pop();
-        DirectDelete(curr);
+        if (curr) DirectDelete(curr);
     }
 
     while (!empty() && !top())
@@ -164,7 +174,7 @@ MotionMaster::DelayedExpire()
     {
         MovementGenerator* curr = top();
         pop();
-        DelayedDelete(curr);
+        if (curr) DelayedDelete(curr);
     }
 
     while (!top())
@@ -182,6 +192,7 @@ void MotionMaster::MoveIdle(MovementSlot slot)
 void
 MotionMaster::MoveRandom(float spawndist)
 {
+
     if (i_owner->GetTypeId() == TYPEID_UNIT)
     {
         DEBUG_LOG("Creature (GUID: %u) start moving random", i_owner->GetGUIDLow());
@@ -325,9 +336,6 @@ void MotionMaster::MoveFall(float z, uint32 id)
             return;
     }
 
-    if (i_owner->HasUnitState(UNIT_STATE_ROOT))
-        return;
-
     i_owner->AddUnitMovementFlag(MOVEMENTFLAG_FALLING);
 
     // don't run spline movement for players
@@ -355,6 +363,25 @@ MotionMaster::MoveSeekAssistance(float x, float y, float z)
         i_owner->ToCreature()->SetReactState(REACT_PASSIVE);
         Mutate(new AssistanceMovementGenerator(x, y, z), MOTION_SLOT_ACTIVE);
     }
+}
+
+void
+MotionMaster::MoveToTarget(uint32 CreatureEntry, uint32 dist, bool Alive)
+{
+    if (i_owner->GetTypeId() == TYPEID_PLAYER)
+        return;
+
+    Creature* creature = i_owner->FindNearestCreature(CreatureEntry, dist, Alive);
+
+    float x = creature->GetPositionX() + 2.0f;
+    float y = creature->GetPositionY();
+    float z = creature->GetPositionZ();
+
+    i_owner->CastStop();
+    Movement::MoveSplineInit init(*i_owner);
+    init.MoveTo(x, y, z, true, false);
+    init.Launch();
+    Mutate(new EffectMovementGenerator(0), MOTION_SLOT_ACTIVE);
 }
 
 void

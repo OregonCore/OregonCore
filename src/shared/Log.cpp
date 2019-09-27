@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Common.h"
@@ -21,6 +21,7 @@
 #include "Console.h"
 #include "Utilities/Util.h"
 
+#include <fstream>
 #include <stdarg.h>
 #include <stdio.h>
 
@@ -205,6 +206,7 @@ void Log::Initialize()
     m_logMaskDatabase |= static_cast<unsigned char>(sConfig.GetBoolDefault("LogDB.Chat", false)) << LOG_TYPE_CHAT;
 }
 
+
 FILE* Log::openLogFile(char const* configFileName, char const* configTimeStampFlag, char const* mode)
 {
     std::string logfn = sConfig.GetStringDefault(configFileName, "");
@@ -236,6 +238,29 @@ FILE* Log::openGmlogPerAccount(uint64 account)
     char namebuf[OREGON_PATH_MAX];
     snprintf(namebuf, OREGON_PATH_MAX, m_gmlog_filename_format.c_str(), account);
     return fopen(namebuf, "ab");
+}
+
+void Log::CreateUpdateFile(const char* str)
+{
+    time_t t = time(NULL);
+    tm* aTm = localtime(&t);
+    uint32 year = aTm->tm_year + 1900;
+    uint32 month = aTm->tm_mon + 1;
+    uint32 day = aTm->tm_mday;
+    uint32 hour = aTm->tm_hour;
+    uint32 minutes = aTm->tm_min;
+    uint32 sec = aTm->tm_sec;
+
+    ofstream(file_);
+    std::ostringstream stream;
+    stream << year << "_" << month << "_" << day <<".sql";
+    file_.open(stream.str().c_str(), std::ios::out | std::ios::app);
+
+    if (file_.is_open())
+    {
+        file_ << str << "\n" << std::endl;
+        file_.close();
+    }
 }
 
 void Log::outTimestamp(FILE* file)

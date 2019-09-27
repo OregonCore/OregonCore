@@ -1,0 +1,1 @@
+UPDATE quest_template SET RewRepFaction1=1031, RewRepValue1=350 WHERE entry IN (11008);

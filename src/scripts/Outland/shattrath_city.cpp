@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -594,6 +594,7 @@ struct npc_khadgars_servantAI : public npc_escortAI
                         case 21:
                             DoScriptText(SAY_KHAD_SERV_21, me, pPlayer);
                             pPlayer->AreaExploredOrEventHappens(QUEST_CITY_LIGHT);
+                            me->DespawnOrUnsummon(5000);
                             SetEscortPaused(false);
                             break;
                         }

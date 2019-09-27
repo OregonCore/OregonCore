@@ -12,7 +12,7 @@
 * more details.
 *
 * You should have received a copy of the GNU General Public License along
-* with this program. If not, see <https://www.gnu.org/licenses/>.
+* with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "DatabaseEnv.h"
@@ -183,8 +183,6 @@ void SmartAI::StopPath(uint32 DespawnTime, uint32 quest, bool fail)
 
 void SmartAI::EndPath(bool fail)
 {
-    GetScript()->ProcessEventsFor(SMART_EVENT_WAYPOINT_ENDED, NULL, mLastWP->id, GetScript()->GetPathId());
-
     RemoveEscortState(SMART_ESCORT_ESCORTING | SMART_ESCORT_PAUSED | SMART_ESCORT_RETURNING);
     mWayPoints = NULL;
     mCurrentWPID = 0;
@@ -695,7 +693,7 @@ void SmartAI::sGossipSelect(Player* player, uint32 sender, uint32 action)
 
 void SmartAI::sGossipSelectCode(Player* /*player*/, uint32 /*sender*/, uint32 /*action*/, const char* /*code*/) { }
 
-void SmartAI::QuestAccept(Player* player, Quest const* quest)
+void SmartAI::sQuestAccept(Player* player, Quest const* quest)
 {
     GetScript()->ProcessEventsFor(SMART_EVENT_ACCEPTED_QUEST, player, quest->GetQuestId());
 }
@@ -814,9 +812,7 @@ void SmartGameObjectAI::UpdateAI(uint32 diff)
 void SmartGameObjectAI::InitializeAI()
 {
     GetScript()->OnInitialize(go);
-    // do not call respawn event if go is not spawned
-    if (go->isSpawned())
-        GetScript()->ProcessEventsFor(SMART_EVENT_RESPAWN);
+
     //Reset();
 }
 

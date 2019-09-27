@@ -12,13 +12,13 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
 SDName: Bloodmyst_Isle
 SD%Complete: 80
-SDComment: Quest support: 9670, 9756(gossip items text needed).
+SDComment: Quest support: 9711, 9670, 9756(gossip items text needed).
 SDCategory: Bloodmyst Isle
 EndScriptData */
 
@@ -30,6 +30,76 @@ EndContentData */
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "ScriptedGossip.h"
+
+/*######
+## mob_matis_the_cruel
+######*/
+enum misc
+{
+    QUEST_MATIS_THE_CRUEL = 9711,
+    FACTION_ORGINAL = 1701,
+    FACTION_FRIENDLY = 35,
+    NPC_TRACKER = 17853,
+};
+
+struct mob_matis_the_cruelAI : public ScriptedAI
+{
+    mob_matis_the_cruelAI(Creature* c) : ScriptedAI(c) {}
+
+    void Reset()
+    {
+        me->SetFaction(FACTION_ORGINAL);
+    }
+
+    void EnterCombat(Unit* who)
+    {
+        if (Creature* tracker = GetClosestCreatureWithEntry(me, NPC_TRACKER, 35.0f))
+        {
+            tracker->Say("We've got you now, Mathis the Cruel!", LANG_UNIVERSAL, me->GetGUID());
+            me->Say("You will regret this, maggot.", LANG_UNIVERSAL, me->GetGUID());
+        }
+    }
+
+    void creditPlayer()
+    {
+        Map* map = me->GetMap();
+        Map::PlayerList const &PlayerList = map->GetPlayers();
+
+        for (auto itr = PlayerList.begin(); itr != PlayerList.end(); ++itr)
+        {
+            if (Player* player = itr->GetSource())
+                if (me->IsWithinDistInMap(player, 20.0f) && (player->GetQuestStatus(QUEST_MATIS_THE_CRUEL) == QUEST_STATUS_INCOMPLETE) )
+                    player->GroupEventHappens(QUEST_MATIS_THE_CRUEL, me);
+        }
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (!UpdateVictim())
+            return;
+
+        if (me->GetHealthPct() <= 25)
+        {
+            me->CombatStop();
+            me->SetFaction(FACTION_FRIENDLY);
+            me->SetStandState(UNIT_STAND_STATE_KNEEL);
+            if (Creature* tracker = GetClosestCreatureWithEntry(me, NPC_TRACKER, 35.0f))
+            {
+                tracker->Say("Return to Kuros. I will bring him to Blood Watch", LANG_UNIVERSAL, me->GetGUID());
+                creditPlayer();
+                tracker->DespawnOrUnsummon(10000);
+            }
+            me->DespawnOrUnsummon(10000);
+        }
+
+        DoMeleeAttackIfReady();
+    }
+};
+
+CreatureAI* GetAI_mob_matis_the_cruel(Creature* pCreature)
+{
+    return new mob_matis_the_cruelAI(pCreature);
+}
 
 /*######
 ## mob_webbed_creature
@@ -138,42 +208,45 @@ bool GossipSelect_npc_captured_sunhawk_agent(Player* pPlayer, Creature* pCreatur
 
 struct npc_young_furbolg_shamanAI : public ScriptedAI
 {
-	npc_young_furbolg_shamanAI(Creature* c) : ScriptedAI(c) {}
+    npc_young_furbolg_shamanAI(Creature* c) : ScriptedAI(c) {}
 
-	void Reset()
-	{
-		reset_timer = 900000;
-		me->SetStandState(UNIT_STAND_STATE_DEAD);
-	}
+    void Reset()
+    {
+        reset_timer = 900000;
+        me->SetStandState(UNIT_STAND_STATE_DEAD);
+        me->SetUInt32Value(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD);
+    }
 
-	uint32 reset_timer;
+    uint32 reset_timer;
 
-	void SpellHit(Unit* /*pWho*/, const SpellEntry* pSpell)
-	{
-		//When hit with ressurection say text
-		if (pSpell->Id == SPELL_SYMBOL_OF_LIFE)
-		{
-			me->SetStandState(UNIT_STAND_STATE_STAND);
-		}
-	}
+    void SpellHit(Unit* /*pWho*/, const SpellEntry* pSpell)
+    {
+        //When hit with ressurection say text
+        if (pSpell->Id == SPELL_SYMBOL_OF_LIFE)
+        {
+            me->SetStandState(UNIT_STAND_STATE_STAND);
+            me->SetUInt32Value(UNIT_DYNAMIC_FLAGS, 0);
+        }
+    }
 
-	void UpdateAI(const uint32 uiDiff)
-	{
-		if (!UpdateVictim())
-		{
-			if (reset_timer <= uiDiff)
-			{
-				me->SetStandState(UNIT_STAND_STATE_DEAD);
-				reset_timer = 900000;
-			}
-			else reset_timer -= uiDiff;
-		}
-	}
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (!UpdateVictim())
+        {
+            if (reset_timer <= uiDiff)
+            {
+                me->SetStandState(UNIT_STAND_STATE_DEAD);
+                me->SetUInt32Value(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD);
+                reset_timer = 900000;
+            }
+            else reset_timer -= uiDiff;
+        }
+    }
 };
 CreatureAI* GetAI_npc_young_furbolg_shaman(Creature* pCreature)
 {
-	return new npc_young_furbolg_shamanAI(pCreature);
-}
+    return new npc_young_furbolg_shamanAI(pCreature);
+};
 
 void AddSC_bloodmyst_isle()
 {
@@ -188,6 +261,11 @@ void AddSC_bloodmyst_isle()
     newscript->Name = "npc_captured_sunhawk_agent";
     newscript->pGossipHello =  &GossipHello_npc_captured_sunhawk_agent;
     newscript->pGossipSelect = &GossipSelect_npc_captured_sunhawk_agent;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "mob_matis_the_cruel";
+    newscript->GetAI = &GetAI_mob_matis_the_cruel;
     newscript->RegisterSelf();
 }
 

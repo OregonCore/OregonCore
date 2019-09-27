@@ -40,6 +40,8 @@ struct boss_archmage_arugalAI : public ScriptedAI
         Shadowport_Timer   = 20000;
         Thundershock_Timer = 15000;
         Transform_Timer    = 25000;
+
+        me->NearTeleportTo(me->GetHomePosition().GetPositionX(), me->GetHomePosition().GetPositionY(), me->GetHomePosition().GetPositionZ(), me->GetHomePosition().GetOrientation());
     }
 
     void EnterCombat(Unit* /*who*/)

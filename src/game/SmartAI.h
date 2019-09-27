@@ -12,7 +12,7 @@
 * more details.
 *
 * You should have received a copy of the GNU General Public License along
-* with this program. If not, see <https://www.gnu.org/licenses/>.
+* with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 #ifndef _SMARTAI_H
@@ -174,7 +174,7 @@ class SmartAI : public CreatureAI
         void sGossipHello(Player* player) override;
         void sGossipSelect(Player* player, uint32 sender, uint32 action) override;
         void sGossipSelectCode(Player* player, uint32 sender, uint32 action, const char* code) override;
-        void QuestAccept(Player* player, Quest const* quest) override;
+        void sQuestAccept(Player* player, Quest const* quest) override;
         //void sQuestSelect(Player* player, Quest const* quest) override;
         void sQuestReward(Player* player, Quest const* quest, uint32 opt) override;
         bool sOnDummyEffect(Unit* caster, uint32 spellId, SpellEffIndex effIndex) override;

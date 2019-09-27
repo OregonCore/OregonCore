@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -686,7 +686,7 @@ void AddSC_the_barrens()
     newscript = new Script;
     newscript->Name = "npc_gilthares";
     newscript->GetAI = &GetAI_npc_gilthares;
-    newscript->QuestAccept = &QuestAccept_npc_gilthares;
+    newscript->pQuestAccept = &QuestAccept_npc_gilthares;
     newscript->RegisterSelf();
 
     newscript = new Script;
@@ -708,7 +708,7 @@ void AddSC_the_barrens()
     newscript = new Script;
     newscript->Name = "npc_wizzlecrank_shredder";
     newscript->GetAI = &GetAI_npc_wizzlecrank_shredderAI;
-    newscript->QuestAccept = &QuestAccept_npc_wizzlecrank_shredder;
+    newscript->pQuestAccept = &QuestAccept_npc_wizzlecrank_shredder;
     newscript->RegisterSelf();
 }
 

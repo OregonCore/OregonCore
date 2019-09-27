@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "ScriptMgr.h"
@@ -241,6 +241,13 @@ void ScriptMgr::OnLogout(Player* player)
     tmpscript->OnLogout(player);
 }
 
+void ScriptMgr::OnGivePlayerXP(Player* player, uint32& xp, Unit* victim)
+{
+    Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
+    if (!tmpscript || !tmpscript->OnGivePlayerXP) return;
+    tmpscript->OnGivePlayerXP(player, xp, victim);
+}
+
 void ScriptMgr::OnPVPKill(Player* killer, Player* killed)
 {
     Script* tmpscript = m_scripts[GetScriptId("scripted_on_events")];
@@ -383,10 +390,10 @@ bool ScriptMgr::GOSelectWithCode(Player* pPlayer, GameObject* pGO, uint32 uiSend
 bool ScriptMgr::QuestAccept(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
 {
     Script* tmpscript = m_scripts[pCreature->GetScriptId()];
-    if (!tmpscript || !tmpscript->QuestAccept) return false;
+    if (!tmpscript || !tmpscript->pQuestAccept) return false;
 
     pPlayer->PlayerTalkClass->ClearMenus();
-    return tmpscript->QuestAccept(pPlayer, pCreature, pQuest);
+    return tmpscript->pQuestAccept(pPlayer, pCreature, pQuest);
 }
 
 bool ScriptMgr::QuestSelect(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
@@ -443,13 +450,13 @@ bool ScriptMgr::ItemHello(Player* pPlayer, Item* pItem, Quest const* pQuest)
     return tmpscript->pItemHello(pPlayer, pItem, pQuest);
 }
 
-bool ScriptMgr::OnQuestAccept(Player* pPlayer, Item* pItem, Quest const* pQuest)
+bool ScriptMgr::ItemQuestAccept(Player* pPlayer, Item* pItem, Quest const* pQuest)
 {
     Script* tmpscript = m_scripts[pItem->GetProto()->ScriptId];
-    if (!tmpscript || !tmpscript->OnQuestAccept) return false;
+    if (!tmpscript || !tmpscript->pItemQuestAccept) return false;
 
     pPlayer->PlayerTalkClass->ClearMenus();
-    return tmpscript->OnQuestAccept(pPlayer, pItem, pQuest);
+    return tmpscript->pItemQuestAccept(pPlayer, pItem, pQuest);
 }
 
 bool ScriptMgr::GOHello(Player* pPlayer, GameObject* pGO)

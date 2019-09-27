@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Common.h"
@@ -312,7 +312,7 @@ pAuraHandler AuraHandler[TOTAL_AURAS] =
     &Aura::HandleUnused,                                    //258 unused
     &Aura::HandleUnused,                                    //259 unused
     &Aura::HandleUnused,                                    //260 unused
-    &Aura::HandlePhase                                      //261 SPELL_AURA_261 some phased state (44856 spell)
+    &Aura::HandleNULL                                       //261 SPELL_AURA_261 some phased state (44856 spell)
 };
 
 Aura::Aura(SpellEntry const* spellproto, uint32 eff, int32* currentBasePoints, Unit* target, Unit* caster, Item* castItem) :
@@ -594,9 +594,9 @@ void Aura::Update(uint32 diff)
     if (m_isPeriodic && (m_duration >= 0 || m_isPassive || m_permanent))
     {
         m_periodicTimer -= diff;
+
         if (m_periodicTimer <= 0)                            // tick also at m_periodicTimer == 0 to prevent lost last tick in case max m_duration == (max m_periodicTimer)*N
         {
-            ++m_tickNumber;
 
             if (m_modifier.m_auraname == SPELL_AURA_MOD_REGEN ||
                 m_modifier.m_auraname == SPELL_AURA_MOD_POWER_REGEN ||
@@ -610,6 +610,7 @@ void Aura::Update(uint32 diff)
             }
             // update before applying (aura can be removed in TriggerSpell or PeriodicTick calls)
             m_periodicTimer += m_amplitude;//m_modifier.periodictime;
+            ++m_tickNumber;
 
             if (!m_target->HasUnitState(UNIT_STATE_ISOLATED))
                 PeriodicTick();
@@ -684,14 +685,14 @@ void AreaAura::Update(uint32 diff)
             case AREA_AURA_FRIEND:
                 {
                     Oregon::AnyFriendlyUnitInObjectRangeCheck u_check(caster, caster, m_radius);
-                    Oregon::UnitListSearcher<Oregon::AnyFriendlyUnitInObjectRangeCheck> searcher(caster, targets, u_check);
+                    Oregon::UnitListSearcher<Oregon::AnyFriendlyUnitInObjectRangeCheck> searcher(targets, u_check);
                     caster->VisitNearbyObject(m_radius, searcher);
                     break;
                 }
             case AREA_AURA_ENEMY:
                 {
                     Oregon::AnyAoETargetUnitInObjectRangeCheck u_check(caster, caster, m_radius); // No GetCharmer in searcher
-                    Oregon::UnitListSearcher<Oregon::AnyAoETargetUnitInObjectRangeCheck> searcher(caster, targets, u_check);
+                    Oregon::UnitListSearcher<Oregon::AnyAoETargetUnitInObjectRangeCheck> searcher(targets, u_check);
                     caster->VisitNearbyObject(m_radius, searcher);
                     break;
                 }
@@ -3210,6 +3211,7 @@ void Aura::HandleAuraTrackCreatures(bool apply, bool /*Real*/)
 
     if (apply)
         m_target->RemoveNoStackAurasDueToAura(this);
+
     m_target->SetUInt32Value(PLAYER_TRACK_CREATURES, apply ? ((uint32)1) << (m_modifier.m_miscvalue - 1) : 0);
 }
 
@@ -3220,6 +3222,7 @@ void Aura::HandleAuraTrackResources(bool apply, bool /*Real*/)
 
     if (apply)
         m_target->RemoveNoStackAurasDueToAura(this);
+
     m_target->SetUInt32Value(PLAYER_TRACK_RESOURCES, apply ? ((uint32)1) << (m_modifier.m_miscvalue - 1) : 0);
 }
 
@@ -3367,7 +3370,7 @@ void Aura::HandleFeignDeath(bool apply, bool Real)
 
         std::list<Unit*> targets;
         Oregon::AnyUnfriendlyUnitInObjectRangeCheck u_check(m_target, m_target, m_target->GetMap()->GetVisibilityRange());
-        Oregon::UnitListSearcher<Oregon::AnyUnfriendlyUnitInObjectRangeCheck> searcher(m_target, targets, u_check);
+        Oregon::UnitListSearcher<Oregon::AnyUnfriendlyUnitInObjectRangeCheck> searcher(targets, u_check);
         m_target->VisitNearbyObject(m_target->GetMap()->GetVisibilityRange(), searcher);
         for (std::list<Unit*>::iterator iter = targets.begin(); iter != targets.end(); ++iter)
         {
@@ -3481,10 +3484,9 @@ void Aura::HandleModStealth(bool apply, bool Real)
                 m_target->CastSpell(m_target, 21009, true, NULL, this);
         }
 
-        // Handle cast canceling
         std::list<Unit*> targets;
         Oregon::AnyUnfriendlyUnitInObjectRangeCheck u_check(m_target, m_target, m_target->GetMap()->GetVisibilityRange());
-        Oregon::UnitListSearcher<Oregon::AnyUnfriendlyUnitInObjectRangeCheck> searcher(m_target, targets, u_check);
+        Oregon::UnitListSearcher<Oregon::AnyUnfriendlyUnitInObjectRangeCheck> searcher(targets, u_check);
         m_target->VisitNearbyObject(m_target->GetMap()->GetVisibilityRange(), searcher);
         for (std::list<Unit*>::iterator iter = targets.begin(); iter != targets.end(); ++iter)
         {
@@ -5265,14 +5267,15 @@ void Aura::HandleModDamagePercentDone(bool apply, bool Real)
             m_target->HandleStatModifier(UNIT_MOD_DAMAGE_MAINHAND, TOTAL_PCT, float(GetModifierValue()), apply);
             m_target->HandleStatModifier(UNIT_MOD_DAMAGE_OFFHAND, TOTAL_PCT, float(GetModifierValue()), apply);
             m_target->HandleStatModifier(UNIT_MOD_DAMAGE_RANGED, TOTAL_PCT, float(GetModifierValue()), apply);
+
+            // For show in client
+            if (m_target->GetTypeId() == TYPEID_PLAYER)
+                m_target->ApplyModSignedFloatValue(PLAYER_FIELD_MOD_DAMAGE_DONE_PCT, m_modifier.m_amount / 100.0f, apply);
         }
         else
         {
             // done in Player::_ApplyWeaponDependentAuraMods
         }
-        // For show in client
-        if (m_target->GetTypeId() == TYPEID_PLAYER)
-            m_target->ApplyModSignedFloatValue(PLAYER_FIELD_MOD_DAMAGE_DONE_PCT, m_modifier.m_amount / 100.0f, apply);
     }
 
     // Skip non magic case for speedup
@@ -5938,8 +5941,7 @@ void Aura::PeriodicTick()
 
             // As of 2.2 resilience reduces damage from DoT ticks as much as the chance to not be critically hit
             // Reduce dot damage from resilience for players
-            if (m_target->GetTypeId() == TYPEID_PLAYER &&
-                !GetSpellProto()->HasAttribute(SPELL_ATTR_EX5_DOT_IGNORE_RESILIENCE))
+            if (m_target->GetTypeId() == TYPEID_PLAYER)
                 pdamage -= m_target->ToPlayer()->GetDotDamageReduction(pdamage);
 
             pdamage *= GetStackAmount();
@@ -6513,11 +6515,16 @@ void Aura::PeriodicDummyTick()
             return;
         }
     case 7057:                                  // Haunting Spirits
+    {
+        if (roll_chance_i(33))
         {
-            if (roll_chance_i(33))
-                m_target->CastSpell(m_target, m_modifier.m_amount, true, NULL, this);
-            return;
+            m_target->CastSpell(m_target, m_modifier.m_amount, true, NULL, this);
+
+            m_amplitude = 30000;
         }
+
+        return;
+    }
     //        // Panda
     //        case 19230: break;
     //        // Master of Subtlety
@@ -6826,39 +6833,5 @@ void Aura::HandleIncreasePetOutdoorSpeed(bool apply, bool /*Real*/)
             }
         }
     }
-}
-
-void Aura::HandlePhase(bool apply, bool /*Real*/)
-{
-    // always non stackable
-    if (apply)
-    {
-        Unit::AuraList const& phases = m_target->GetAurasByType(SPELL_AURA_PHASE);
-        if (!phases.empty())
-            m_target->RemoveAurasDueToSpell(phases.front()->GetId(), this);
-    }
-
-    uint32 newPhase = 0;
-    Unit::AuraList const& phases = m_target->GetAurasByType(SPELL_AURA_PHASE);
-    if (!phases.empty())
-        for (Unit::AuraList::const_iterator itr = phases.begin(); itr != phases.end(); ++itr)
-            newPhase |= (*itr)->GetMiscValue();
-
-    if (Player* player = m_target->ToPlayer())
-    {
-        if (!newPhase)
-            newPhase = 0x00000001;
-
-        // GM-mode have mask 0xFFFFFFFF
-        if (player->IsGameMaster())
-            newPhase = 0xFFFFFFFF;
-
-        player->SetPhaseMask(newPhase, false);
-        //player->GetSession()->SendSetPhaseShift(newPhase);
-    }
-
-    // need triggering visibility update base at phase update of not GM invisible (other GMs anyway see in any phases)
-    if (m_target->IsVisible())
-        m_target->UpdateObjectVisibility();
 }
 

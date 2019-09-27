@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -731,7 +731,7 @@ struct npc_dreghooddrudgeAI : public ScriptedAI
 
 				if (flee_timer <= uiDiff)
 				{
-					me->DisappearAndDie();
+					me->DisappearAndDie(false);
 					flee_timer = 8000;
 				}
 				else flee_timer -= uiDiff;
@@ -797,7 +797,7 @@ void AddSC_zangarmarsh()
     newscript = new Script;
     newscript->Name = "npc_kayra_longmane";
     newscript->GetAI = &GetAI_npc_kayra_longmaneAI;
-    newscript->QuestAccept = &QuestAccept_npc_kayra_longmane;
+    newscript->pQuestAccept = &QuestAccept_npc_kayra_longmane;
     newscript->RegisterSelf();
 
     newscript = new Script;

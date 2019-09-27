@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -106,6 +106,6 @@ void AddSC_westfall()
     newscript = new Script;
     newscript->Name = "npc_defias_traitor";
     newscript->GetAI = &GetAI_npc_defias_traitor;
-    newscript->QuestAccept = &QuestAccept_npc_defias_traitor;
+    newscript->pQuestAccept = &QuestAccept_npc_defias_traitor;
     newscript->RegisterSelf();
 }

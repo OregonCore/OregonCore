@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -24,31 +24,47 @@ EndScriptData */
 
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
+#include "mechanar.h"
 
-#define SAY_AGGRO                       -1554020
-#define SAY_DOMINATION_1                -1554021
-#define SAY_DOMINATION_2                -1554022
-#define SAY_SUMMON                      -1554023
-#define SAY_ENRAGE                      -1554024
-#define SAY_SLAY_1                      -1554025
-#define SAY_SLAY_2                      -1554026
-#define SAY_DEATH                       -1554027
+enum pathaleon
+{
+    SAY_AGGRO                       = -1554020,
+    SAY_DOMINATION_1                = -1554021,
+    SAY_DOMINATION_2                = -1554022,
+    SAY_SUMMON                      = -1554023,
+    SAY_ENRAGE                      = -1554024,
+    SAY_SLAY_1                      = -1554025,
+    SAY_SLAY_2                      = -1554026,
+    SAY_DEATH                       = -1554027,
+    SAY_APPEAR                      = -1554028,
 
-// Spells to be casted
-#define SPELL_MANA_TAP                36021
-#define SPELL_ARCANE_TORRENT          36022
-#define SPELL_DOMINATION              35280
-#define H_SPELL_ARCANE_EXPLOSION        15453
-#define SPELL_FRENZY                    36992
+    SPELL_MANA_TAP                  = 36021,
+    SPELL_ARCANE_TORRENT            = 36022,
+    SPELL_DOMINATION                = 35280,
+    SPELL_ARCANE_EXPLOSION          = 15453,
+    SPELL_FRENZY                    = 36992,
+    SPELL_DISGRUNTLED_ANGER         = 35289,
 
-#define SPELL_SUMMON_NETHER_WRAITH_1    35285               //Spells work, but not implemented
-#define SPELL_SUMMON_NETHER_WRAITH_2    35286
-#define SPELL_SUMMON_NETHER_WRAITH_3    35287
-#define SPELL_SUMMON_NETHER_WRAITH_4    35288
+    SPELL_SUMMON_NETHER_WRAITH_1    = 35285,
+    SPELL_SUMMON_NETHER_WRAITH_2    = 35286,
+    SPELL_SUMMON_NETHER_WRAITH_3    = 35287,
+    SPELL_SUMMON_NETHER_WRAITH_4    = 35288,
 
-// Add Spells
-#define SPELL_DETONATION              35058
-#define SPELL_ARCANE_MISSILES         35034
+    SPELL_DETONATION                = 35058,
+    SPELL_ARCANE_MISSILES           = 35034,
+
+    EVENT_SUMMON                    = 1,
+    EVENT_MANA_TAP                  = 2,
+    EVENT_ARCANE_TORRENT            = 3,
+    EVENT_DOMINATION                = 4,
+    EVENT_ARCANE_EXPLOSION          = 5,
+    EVENT_FRENZY                    = 6,
+
+    EVENT_ARCANE_MISSILE            = 7,
+    EVENT_DETONATION                = 8,
+    EVENT_DIE                       = 9,
+
+};
 
 struct boss_pathaleon_the_calculatorAI : public ScriptedAI
 {
@@ -57,62 +73,56 @@ struct boss_pathaleon_the_calculatorAI : public ScriptedAI
         HeroicMode = me->GetMap()->IsHeroic();
     }
 
-    uint32 Summon_Timer;
     SummonList summons;
-    uint32 ManaTap_Timer;
-    uint32 ArcaneTorrent_Timer;
-    uint32 Domination_Timer;
-    uint32 ArcaneExplosion_Timer;
-    bool HeroicMode;
-    bool Enraged;
+    EventMap events;
 
-    uint32 Counter;
+    void InitializeAI()
+    {
+        me->SetVisible(false);
+        me->SetReactState(REACT_PASSIVE);
+    }
+
+    void DoAction(int32 /*param*/)
+    {
+        me->SetVisible(true);
+        me->CastSpell(me, SPELL_TELEPORT_VISUAL, true);
+        me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_READY1H);
+        me->SetReactState(REACT_AGGRESSIVE);
+        DoScriptText(SAY_APPEAR, me);
+    }
 
     void Reset()
     {
-        Summon_Timer = 30000;
-        ManaTap_Timer = 12000 + rand() % 8000;
-        ArcaneTorrent_Timer = 16000 + rand() % 9000;
-        Domination_Timer = 25000 + rand() % 15000;
-        ArcaneExplosion_Timer = 8000 + rand() % 5000;
-
-        Enraged = false;
-
-        Counter = 0;
+        events.Reset();
         summons.DespawnAll();
+        InitializeAI();
     }
     void EnterCombat(Unit* /*who*/)
     {
         DoScriptText(SAY_AGGRO, me);
+        events.ScheduleEvent(EVENT_SUMMON, 30000);
+        events.ScheduleEvent(EVENT_MANA_TAP, 12000);
+        events.ScheduleEvent(EVENT_ARCANE_TORRENT, 16000);
+        events.ScheduleEvent(EVENT_DOMINATION, 25000);
+        events.ScheduleEvent(EVENT_ARCANE_EXPLOSION, 8000);
+        events.ScheduleEvent(EVENT_FRENZY, 1000);
     }
 
-    void KilledUnit(Unit* /*victim*/)
+    void KilledUnit(Unit* victim)
     {
-        switch (rand() % 2)
-        {
-        case 0:
-            DoScriptText(SAY_SLAY_1, me);
-            break;
-        case 1:
-            DoScriptText(SAY_SLAY_2, me);
-            break;
-        }
+        if (victim->GetTypeId() == TYPEID_PLAYER)
+            DoScriptText(RAND(SAY_SLAY_1, SAY_SLAY_2), me);
     }
 
     void JustDied(Unit* /*Killer*/)
     {
         DoScriptText(SAY_DEATH, me);
-
         summons.DespawnAll();
     }
 
     void JustSummoned(Creature* summon)
     {
         summons.Summon(summon);
-    }
-    void SummonedCreatureDespawn(Creature* summon)
-    {
-        summons.Despawn(summon);
     }
 
     void UpdateAI(const uint32 diff)
@@ -121,71 +131,55 @@ struct boss_pathaleon_the_calculatorAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (Summon_Timer <= diff)
+        events.Update(diff);
+        if (me->HasUnitState(UNIT_STATE_CASTING))
+            return;
+
+        switch (events.ExecuteEvent())
         {
-            for (int i = 0; i < 3; i++)
+        case EVENT_ARCANE_EXPLOSION:
+            me->CastSpell(me, SPELL_ARCANE_EXPLOSION, false);
+            events.ScheduleEvent(EVENT_ARCANE_EXPLOSION, 12000);
+            break;
+        case EVENT_ARCANE_TORRENT:
+            me->RemoveAurasDueToSpell(SPELL_MANA_TAP);
+            me->ModifyPower(POWER_MANA, 5000);
+            me->CastSpell(me, SPELL_ARCANE_TORRENT, false);
+            events.ScheduleEvent(EVENT_ARCANE_TORRENT, 15000);
+            break;
+        case EVENT_MANA_TAP:
+            if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
             {
-                Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                Creature* Wraith = me->SummonCreature(21062, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
-                if (pTarget && Wraith)
-                    Wraith->AI()->AttackStart(pTarget);
+                if (target->getPowerType() != POWER_MANA)
+                    SelectTarget(SELECT_TARGET_RANDOM, 0);
+
+                me->CastSpell(target, SPELL_MANA_TAP, false);
+                events.ScheduleEvent(EVENT_MANA_TAP, 18000);
             }
+            break;
+        case EVENT_DOMINATION:
+            DoScriptText(RAND(SAY_DOMINATION_1, SAY_DOMINATION_2), me);
+            if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 1, 50.0f))
+                me->CastSpell(target, SPELL_DOMINATION, false);
+            events.ScheduleEvent(EVENT_DOMINATION, 30000);
+            break;
+        case EVENT_FRENZY:
+            if (me->HealthBelowPct(20))
+            {
+                summons.DespawnAll();
+                me->CastSpell(me, SPELL_DISGRUNTLED_ANGER, true);
+                DoScriptText(SAY_ENRAGE, me);
+                break;
+            }
+            events.ScheduleEvent(EVENT_FRENZY, 1000);
+            break;
+        case EVENT_SUMMON:
+            for (uint8 i = 0; i < HeroicMode ? 4:3; ++i)
+                me->CastSpell(me, SPELL_SUMMON_NETHER_WRAITH_1 + i, true);
+
             DoScriptText(SAY_SUMMON, me);
-            Summon_Timer = 30000 + rand() % 15000;
-        }
-        else Summon_Timer -= diff;
-
-        if (ManaTap_Timer <= diff)
-        {
-            DoCastVictim(SPELL_MANA_TAP);
-            ManaTap_Timer = 14000 + rand() % 8000;
-        }
-        else ManaTap_Timer -= diff;
-
-        if (ArcaneTorrent_Timer <= diff)
-        {
-            DoCastVictim(SPELL_ARCANE_TORRENT);
-            ArcaneTorrent_Timer = 12000 + rand() % 6000;
-        }
-        else ArcaneTorrent_Timer -= diff;
-
-        if (Domination_Timer <= diff)
-        {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1))
-            {
-                switch (rand() % 2)
-                {
-                case 0:
-                    DoScriptText(SAY_DOMINATION_1, me);
-                    break;
-                case 1:
-                    DoScriptText(SAY_DOMINATION_2, me);
-                    break;
-                }
-
-                DoCast(pTarget, SPELL_DOMINATION);
-            }
-            Domination_Timer = 25000 + rand() % 5000;
-        }
-        else Domination_Timer -= diff;
-
-        //Only casting if Heroic Mode is used
-        if (HeroicMode)
-        {
-            if (ArcaneExplosion_Timer <= diff)
-            {
-                DoCastVictim(H_SPELL_ARCANE_EXPLOSION);
-                ArcaneExplosion_Timer = 10000 + rand() % 4000;
-            }
-            else ArcaneExplosion_Timer -= diff;
-        }
-
-        if (!Enraged && HealthBelowPct(20))
-        {
-            DoCast(me, SPELL_FRENZY);
-            DoScriptText(SAY_ENRAGE, me);
-            Enraged = true;
-
+            events.ScheduleEvent(EVENT_SUMMON, urand(30000, 45000));
+            break;
         }
 
         DoMeleeAttackIfReady();
@@ -200,22 +194,14 @@ struct mob_nether_wraithAI : public ScriptedAI
 {
     mob_nether_wraithAI(Creature* c) : ScriptedAI(c) {}
 
-    uint32 ArcaneMissiles_Timer;
-    uint32 Detonation_Timer;
-    uint32 Die_Timer;
-    bool Detonation;
+    EventMap events;
 
-    void Reset()
-    {
-        ArcaneMissiles_Timer = 1000 + rand() % 3000;
-        Detonation_Timer = 20000;
-        Die_Timer = 2200;
-        Detonation = false;
-
-    }
+    void Reset() { }
 
     void EnterCombat(Unit* /*who*/)
     {
+        events.ScheduleEvent(EVENT_ARCANE_MISSILE, 1000 + rand() % 3000);
+        events.ScheduleEvent(EVENT_DETONATION, 20000);
     }
 
     void UpdateAI(const uint32 diff)
@@ -223,37 +209,26 @@ struct mob_nether_wraithAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (ArcaneMissiles_Timer <= diff)
+        events.Update(diff);
+
+        switch (events.ExecuteEvent())
         {
+        case EVENT_ARCANE_MISSILE:
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1))
                 DoCast(pTarget, SPELL_ARCANE_MISSILES);
             else
                 DoCastVictim(SPELL_ARCANE_MISSILES);
-
-            ArcaneMissiles_Timer = 5000 + rand() % 5000;
+            events.Repeat(5000 + rand() % 5000);
+            break;
+        case EVENT_DETONATION:
+            DoCast(me, SPELL_DETONATION);
+            events.ScheduleEvent(EVENT_DIE, 2200);
+            break;
+        case EVENT_DIE:
+            me->setDeathState(JUST_DIED);
+            me->RemoveCorpse();
+            break;
         }
-        else ArcaneMissiles_Timer -= diff;
-
-        if (!Detonation)
-        {
-            if (Detonation_Timer <= diff)
-            {
-                DoCast(me, SPELL_DETONATION);
-                Detonation = true;
-            }
-            else Detonation_Timer -= diff;
-        }
-
-        if (Detonation)
-        {
-            if (Die_Timer <= diff)
-            {
-                me->setDeathState(JUST_DIED);
-                me->RemoveCorpse();
-            }
-            else Die_Timer -= diff;
-        }
-
         DoMeleeAttackIfReady();
     }
 

@@ -1,0 +1,2 @@
+DELETE FROM `creature_template` WHERE `entry`=5847;
+INSERT INTO `creature_template` VALUES (5847, 0, 0, 0, 4595, 0, 4595, 0, 'Heggin Stonewhisker', 'Bael\'dun Chief Engineer', NULL, 0, 24, 24, 0, 630, 630, 0, 0, 0, 122, 2, 1.49, 1.14286, 1, 4, 0, 1450, 0, 1, 1, 1, 0, 0, 0, 2, 0, 0, 0, 7, 0, 5847, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 45, 'EventAI', 0, 3, 0.967742, 1, 0, 4.07988, 0, 1, 755, 0, 0, '');

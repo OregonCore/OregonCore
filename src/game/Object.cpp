@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Common.h"
@@ -108,7 +108,7 @@ Object::~Object()
     }
 
     delete [] m_uint32Values;
-    delete [] m_uint32Values_mirror;
+    m_uint32Values = 0;
 }
 
 void Object::_InitValues()
@@ -552,6 +552,7 @@ void Object::_BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* 
                         value = value & ~UNIT_DYNFLAG_OTHER_TAGGER;
 
                     *data << value;
+
                 }
 
                 // hide RAF menu to non-RAF linked friends
@@ -1089,11 +1090,9 @@ WorldObject::WorldObject(bool isWorldObject):
     , m_isWorldObject(isWorldObject)
     , m_name("")
     , m_isActive(false)
-    , m_visibilityDistanceOverride(0)
     , m_zoneScript(NULL)
     , m_currMap(NULL)
     , m_InstanceId(0)
-    , m_phaseMask(PHASEMASK_NORMAL)
     , m_notifyflags(0), m_executed_notifies(0)
 {
     m_serverSideVisibility.SetValue(SERVERSIDE_VISIBILITY_GHOST, GHOST_VISIBILITY_ALIVE | GHOST_VISIBILITY_GHOST);
@@ -1129,7 +1128,7 @@ void WorldObject::setActive(bool on)
 
     m_isActive = on;
 
-    if (on && !IsInWorld())
+    if (!IsInWorld())
         return;
 
     Map* map = FindMap();
@@ -1152,41 +1151,15 @@ void WorldObject::setActive(bool on)
     }
 }
 
-void WorldObject::SetVisibilityDistanceOverride(VisibilityDistanceType type)
-{
-    if (GetTypeId() == TYPEID_PLAYER)
-        return;
-
-    switch (type)
-    {
-        case VISDIST_TINY:
-            m_visibilityDistanceOverride = VISIBILITY_DISTANCE_TINY;
-            break;
-        case VISDIST_SMALL:
-            m_visibilityDistanceOverride = VISIBILITY_DISTANCE_SMALL;
-            break;
-        case VISDIST_LARGE:
-            m_visibilityDistanceOverride = VISIBILITY_DISTANCE_LARGE;
-            break;
-        case VISDIST_GIGANTIC:
-            m_visibilityDistanceOverride = VISIBILITY_DISTANCE_GIGANTIC;
-            break;
-        default:
-            m_visibilityDistanceOverride = 0;
-    }   
-}
-
 void WorldObject::CleanupsBeforeDelete()
 {
     if (IsInWorld())
         RemoveFromWorld();
 }
 
-void WorldObject::_Create(uint32 guidlow, HighGuid guidhigh, uint32 phaseMask)
+void WorldObject::_Create(uint32 guidlow, HighGuid guidhigh)
 {
     Object::_Create(guidlow, 0, guidhigh);
-
-    m_phaseMask = phaseMask;
 }
 
 void WorldObject::RemoveFromWorld()
@@ -1574,9 +1547,7 @@ float WorldObject::GetGridActivationRange() const
 
 float WorldObject::GetVisibilityRange() const
 {
-    if (IsVisibilityOverridden() && !ToPlayer())
-        return m_visibilityDistanceOverride;
-    else if (isActiveObject() && !ToPlayer())
+    if (isActiveObject() && !ToPlayer())
         return MAX_VISIBILITY_DISTANCE;
     else
         return GetMap()->GetVisibilityRange();
@@ -1588,9 +1559,7 @@ float WorldObject::GetSightRange(const WorldObject* target) const
     {
         if (ToPlayer())
         {
-            if (target && target->IsVisibilityOverridden() && !target->ToPlayer())
-                return target->m_visibilityDistanceOverride;
-            else if (target && target->isActiveObject() && !target->ToPlayer())
+            if (target && target->isActiveObject() && !target->ToPlayer())
                 return MAX_VISIBILITY_DISTANCE;
             else if (ToPlayer()->GetCinematicMgr()->IsOnCinematic())
                 return DEFAULT_VISIBILITY_INSTANCE;
@@ -1689,7 +1658,7 @@ bool WorldObject::CanSeeOrDetect(WorldObject const* obj, bool ignoreStealth, boo
 
 bool WorldObject::CanNeverSee(WorldObject const* obj) const
 {
-    return GetMap() != obj->GetMap() || !InSamePhase(obj);
+    return GetMap() != obj->GetMap();
 }
 
 bool WorldObject::CanDetect(WorldObject const* obj, bool ignoreStealth, bool checkAlert) const
@@ -1766,7 +1735,7 @@ bool WorldObject::CanDetectStealthOf(WorldObject const* obj, bool checkAlert) co
     if (!HasInArc(float(M_PI), obj))
         return false;
 
-    GameObject const* go = obj->ToGameObject();
+    GameObject const* go = ToGameObject();
     for (uint32 i = 0; i < TOTAL_STEALTH_TYPES; ++i)
     {
         if (!(obj->m_stealth.GetFlags() & (1 << i)))
@@ -1870,7 +1839,7 @@ void WorldObject::MonsterSay(int32 textId, uint32 language, uint64 TargetGuid)
 
     Oregon::MonsterChatBuilder say_build(*this, CHAT_MSG_MONSTER_SAY, textId, language, TargetGuid);
     Oregon::LocalizedPacketDo<Oregon::MonsterChatBuilder> say_do(say_build);
-    Oregon::PlayerDistWorker<Oregon::LocalizedPacketDo<Oregon::MonsterChatBuilder> > say_worker(this, sWorld.getConfig(CONFIG_LISTEN_RANGE_SAY), say_do);
+    Oregon::PlayerDistWorker<Oregon::LocalizedPacketDo<Oregon::MonsterChatBuilder> > say_worker(sWorld.getConfig(CONFIG_LISTEN_RANGE_SAY), say_do);
     TypeContainerVisitor<Oregon::PlayerDistWorker<Oregon::LocalizedPacketDo<Oregon::MonsterChatBuilder> >, WorldTypeMapContainer > message(say_worker);
     cell.Visit(p, message, *GetMap(), *this, sWorld.getConfig(CONFIG_LISTEN_RANGE_SAY));
 }
@@ -1884,7 +1853,7 @@ void WorldObject::MonsterYell(int32 textId, uint32 language, uint64 TargetGuid)
 
     Oregon::MonsterChatBuilder say_build(*this, CHAT_MSG_MONSTER_YELL, textId, language, TargetGuid);
     Oregon::LocalizedPacketDo<Oregon::MonsterChatBuilder> say_do(say_build);
-    Oregon::PlayerDistWorker<Oregon::LocalizedPacketDo<Oregon::MonsterChatBuilder> > say_worker(this, sWorld.getConfig(CONFIG_LISTEN_RANGE_YELL), say_do);
+    Oregon::PlayerDistWorker<Oregon::LocalizedPacketDo<Oregon::MonsterChatBuilder> > say_worker(sWorld.getConfig(CONFIG_LISTEN_RANGE_YELL), say_do);
     TypeContainerVisitor<Oregon::PlayerDistWorker<Oregon::LocalizedPacketDo<Oregon::MonsterChatBuilder> >, WorldTypeMapContainer > message(say_worker);
     cell.Visit(p, message, *GetMap(), *this, sWorld.getConfig(CONFIG_LISTEN_RANGE_YELL));
 }
@@ -1911,7 +1880,7 @@ void WorldObject::MonsterTextEmote(int32 textId, uint64 TargetGuid, bool IsBossE
 
     Oregon::MonsterChatBuilder say_build(*this, IsBossEmote ? CHAT_MSG_RAID_BOSS_EMOTE : CHAT_MSG_MONSTER_EMOTE, textId, LANG_UNIVERSAL, TargetGuid);
     Oregon::LocalizedPacketDo<Oregon::MonsterChatBuilder> say_do(say_build);
-    Oregon::PlayerDistWorker<Oregon::LocalizedPacketDo<Oregon::MonsterChatBuilder> > say_worker(this, sWorld.getConfig(CONFIG_LISTEN_RANGE_TEXTEMOTE), say_do);
+    Oregon::PlayerDistWorker<Oregon::LocalizedPacketDo<Oregon::MonsterChatBuilder> > say_worker(sWorld.getConfig(CONFIG_LISTEN_RANGE_TEXTEMOTE), say_do);
     TypeContainerVisitor<Oregon::PlayerDistWorker<Oregon::LocalizedPacketDo<Oregon::MonsterChatBuilder> >, WorldTypeMapContainer > message(say_worker);
     cell.Visit(p, message, *GetMap(), *this, sWorld.getConfig(CONFIG_LISTEN_RANGE_TEXTEMOTE));
 }
@@ -2095,7 +2064,7 @@ TempSummon* Map::SummonCreature(uint32 entry, const Position& pos, SummonPropert
         return NULL;
     }
 
-    if (!summon->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_UNIT), this, PHASEMASK_NORMAL, entry, team, pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), pos.GetOrientation()))
+    if (!summon->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_UNIT), this, entry, team, pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), pos.GetOrientation()))
     {
         delete summon;
         return NULL;
@@ -2172,7 +2141,7 @@ Pet* Player::SummonPet(uint32 entry, float x, float y, float z, float ang, PetTy
 
     Map* map = GetMap();
     uint32 pet_number = sObjectMgr.GeneratePetNumber();
-    if (!pet->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_PET), map, GetPhaseMask(), entry, pet_number))
+    if (!pet->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_PET), map, entry, pet_number))
     {
         sLog.outError("no such creature entry %u", entry);
         delete pet;
@@ -2262,7 +2231,7 @@ GameObject* WorldObject::SummonGameObject(uint32 entry, float x, float y, float 
     }
     Map* map = GetMap();
     GameObject* go = new GameObject();
-    if (!go->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT), entry, map, PHASEMASK_NORMAL, x, y, z, ang, rotation0, rotation1, rotation2, rotation3, 100, GO_STATE_READY))
+    if (!go->Create(sObjectMgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT), entry, map, x, y, z, ang, rotation0, rotation1, rotation2, rotation3, 100, GO_STATE_READY))
     {
         delete go;
         return NULL;
@@ -2320,7 +2289,7 @@ Creature* WorldObject::FindNearestCreature(uint32 entry, float range, bool alive
 {
     Creature* creature = NULL;
     Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck checker(*this, entry, alive, range);
-    Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(this, creature, checker);
+    Oregon::CreatureLastSearcher<Oregon::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(creature, checker);
     VisitNearbyObject(range, searcher);
     return creature;
 }
@@ -2329,7 +2298,7 @@ GameObject* WorldObject::FindNearestGameObject(uint32 entry, float range)
 {
     GameObject* go = NULL;
     Oregon::NearestGameObjectEntryInObjectRangeCheck checker(*this, entry, range);
-    Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectEntryInObjectRangeCheck> searcher(this, go, checker);
+    Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectEntryInObjectRangeCheck> searcher(go, checker);
     VisitNearbyGridObject(range, searcher);
     return go;
 }
@@ -2338,7 +2307,7 @@ GameObject* WorldObject::FindNearestGameObjectOfType(GameobjectTypes type, float
 {
     GameObject* go = NULL;
     Oregon::NearestGameObjectTypeInObjectRangeCheck checker(*this, type, range);
-    Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectTypeInObjectRangeCheck> searcher(this, go, checker);
+    Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectTypeInObjectRangeCheck> searcher(go, checker);
     VisitNearbyGridObject(range, searcher);
     return go;
 }
@@ -2350,7 +2319,7 @@ void WorldObject::GetGameObjectListWithEntryInGrid(std::list<GameObject*>& gameo
     cell.SetNoCreate();
 
     Oregon::AllGameObjectsWithEntryInRange check(this, entry, maxSearchRange);
-    Oregon::GameObjectListSearcher<Oregon::AllGameObjectsWithEntryInRange> searcher(this, gameobjectList, check);
+    Oregon::GameObjectListSearcher<Oregon::AllGameObjectsWithEntryInRange> searcher(gameobjectList, check);
     TypeContainerVisitor<Oregon::GameObjectListSearcher<Oregon::AllGameObjectsWithEntryInRange>, GridTypeMapContainer> visitor(searcher);
 
     cell.Visit(pair, visitor, *(this->GetMap()), *this, maxSearchRange);
@@ -2363,7 +2332,7 @@ void WorldObject::GetCreatureListWithEntryInGrid(std::list<Creature*>& creatureL
     cell.SetNoCreate();
 
     Oregon::AllCreaturesOfEntryInRange check(this, entry, maxSearchRange);
-    Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(this, creatureList, check);
+    Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(creatureList, check);
     TypeContainerVisitor<Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange>, GridTypeMapContainer> visitor(searcher);
 
     cell.Visit(pair, visitor, *(this->GetMap()), *this, maxSearchRange);
@@ -2378,11 +2347,14 @@ void WorldObject::GetNearPoint2D(float& x, float& y, float distance2d, float abs
     Oregon::NormalizeMapCoord(y);
 }
 
-void WorldObject::GetNearPoint(WorldObject const* /*searcher*/, float& x, float& y, float& z, float searcher_size, float distance2d, float absAngle) const
+void WorldObject::GetNearPoint(WorldObject const* searcher, float& x, float& y, float& z, float searcher_size, float distance2d, float absAngle) const
 {
     GetNearPoint2D(x, y, distance2d + searcher_size, absAngle);
     z = GetPositionZ();
-    UpdateAllowedPositionZ(x, y, z);
+    if (searcher)
+        searcher->UpdateAllowedPositionZ(x, y, z);
+    else
+        UpdateAllowedPositionZ(x, y, z);
 
     // return if the point is already in LoS
     if (IsWithinLOS(x, y, z))
@@ -2428,6 +2400,20 @@ Position WorldObject::GetRandomNearPosition(float radius)
     Position pos = GetPosition();
     MovePosition(pos, radius * (float)rand_norm(), (float)rand_norm() * static_cast<float>(2 * M_PI));
     return pos;
+}
+
+void WorldObject::GetChargeContactPoint(const WorldObject* obj, float& x, float& y, float& z, float distance2d) const
+{
+    // angle to face `obj` to `this` using distance includes size of `obj`
+    GetNearPoint(obj, x, y, z, obj->GetObjectSize(), distance2d, GetAngle(obj));
+
+    if (fabs(this->GetPositionZ() - z) > 3.0f || !IsWithinLOS(x, y, z))
+    {
+        x = this->GetPositionX();
+        y = this->GetPositionY();
+        z = this->GetPositionZ();
+        obj->UpdateGroundPositionZ(x, y, z);
+    }
 }
 
 // @todo: replace with WorldObject::UpdateAllowedPositionZ
@@ -2584,14 +2570,6 @@ void WorldObject::MovePositionToFirstCollision(Position& pos, float dist, float 
     pos.SetOrientation(GetOrientation());
 }
 
-void WorldObject::SetPhaseMask(uint32 newPhaseMask, bool update)
-{
-    m_phaseMask = newPhaseMask;
-
-    if (update && IsInWorld())
-        UpdateObjectVisibility();
-}
-
 void WorldObject::PlayDistanceSound(uint32 sound_id, Player* target /*= NULL*/)
 {
     WorldPacket data(SMSG_PLAY_OBJECT_SOUND, 4 + 8);
@@ -2620,7 +2598,7 @@ void WorldObject::DestroyForNearbyPlayers()
 
     std::list<Player*> targets;
     Oregon::AnyPlayerInObjectRangeCheck check(this, GetVisibilityRange(), false);
-    Oregon::PlayerListSearcher<Oregon::AnyPlayerInObjectRangeCheck> searcher(this, targets, check);
+    Oregon::PlayerListSearcher<Oregon::AnyPlayerInObjectRangeCheck> searcher(targets, check);
     VisitNearbyWorldObject(GetVisibilityRange(), searcher);
     for (std::list<Player*>::const_iterator iter = targets.begin(); iter != targets.end(); ++iter)
     {

@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* Script Data Start
@@ -200,7 +200,7 @@ struct npc_blastmaster_emi_shortfuseAI : public npc_escortAI
                 if (Creature* pSummon = Unit::GetCreature(*me, *itr))
                 {
                     if (pSummon->IsAlive())
-                        pSummon->DisappearAndDie();
+                        pSummon->DisappearAndDie(false);
                     else
                         pSummon->RemoveCorpse();
                 }
@@ -707,6 +707,6 @@ void AddSC_gnomeregan()
 	newscript = new Script;
 	newscript->Name = "npc_kernobee";
 	newscript->GetAI = &GetAI_npc_kernobee;
-	newscript->QuestAccept = &QuestAccept_npc_kernobee;
+	newscript->pQuestAccept = &QuestAccept_npc_kernobee;
 	newscript->RegisterSelf();
 }

@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -131,6 +131,7 @@ enum eDeserter
 const Position DeserterDisappearPos = { -3609.03f, -4332.91f, 9.39354f, 3.73862f};
 
 #define GOSSIP_ITEM_DESERTER "Your propaganda wont`t work on me. Spout your treasonous filth elsewhere traitor!"
+#define SAY_1 "If you think you can stop us, you're mistaken, 'friend.'"
 
 struct npc_deserter_agitatorAI : public ScriptedAI
 {
@@ -182,6 +183,7 @@ bool GossipSelect_npc_deserter_agitator(Player* pPlayer, Creature* pCreature, ui
             pCreature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
             pCreature->SetFaction(14);
             pCreature->AI()->AttackStart(pPlayer);
+            pCreature->MonsterSay(SAY_1, LANG_COMMON, 0);
             break;
         case 1:
             pPlayer->KilledMonsterCredit(NPC_THERAMORE_DESERTER, 0);
@@ -971,7 +973,7 @@ struct npc_private_hendelAI : public ScriptedAI
         cell.SetNoCreate();
 
         Oregon::AllCreaturesOfEntryInRange check(me, NPC_SENTRY, 20);
-        Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(me, lCreatureList, check);
+        Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange> searcher(lCreatureList, check);
         TypeContainerVisitor<Oregon::CreatureListSearcher<Oregon::AllCreaturesOfEntryInRange>, GridTypeMapContainer> cSearcher(searcher);
         cell.Visit(pair, cSearcher, *(me->GetMap()), *me, me->GetGridActivationRange());
 
@@ -1405,19 +1407,19 @@ void AddSC_dustwallow_marsh()
     newscript = new Script;
     newscript->Name = "npc_morokk";
     newscript->GetAI = &GetAI_npc_morokk;
-    newscript->QuestAccept = &QuestAccept_npc_morokk;
+    newscript->pQuestAccept = &QuestAccept_npc_morokk;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "npc_ogron";
     newscript->GetAI = &GetAI_npc_ogron;
-    newscript->QuestAccept = &QuestAccept_npc_ogron;
+    newscript->pQuestAccept = &QuestAccept_npc_ogron;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "npc_private_hendel";
     newscript->GetAI = &GetAI_npc_private_hendel;
-    newscript->QuestAccept = &QuestAccept_npc_private_hendel;
+    newscript->pQuestAccept = &QuestAccept_npc_private_hendel;
     newscript->RegisterSelf();
 
     newscript = new Script;
@@ -1433,7 +1435,7 @@ void AddSC_dustwallow_marsh()
     newscript = new Script;
     newscript->Name = "npc_stinky";
     newscript->GetAI = &GetAI_npc_stinky;
-    newscript->QuestAccept = &QuestAccept_npc_stinky;
+    newscript->pQuestAccept = &QuestAccept_npc_stinky;
     newscript->RegisterSelf();
 
     newscript = new Script;

@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -41,6 +41,12 @@ EndScriptData */
 #define SPELL_DARK_SHELL                32358
 #define H_SPELL_DARK_SHELL              38759
 
+enum events
+{
+    EVENT_VOIDBLAST     = 1,
+    EVENT_DARKSHELL     = 2,
+};
+
 struct boss_pandemoniusAI : public ScriptedAI
 {
     boss_pandemoniusAI(Creature* c) : ScriptedAI(c)
@@ -49,14 +55,11 @@ struct boss_pandemoniusAI : public ScriptedAI
     }
 
     bool HeroicMode;
-    uint32 VoidBlast_Timer;
-    uint32 DarkShell_Timer;
     uint32 VoidBlast_Counter;
+    EventMap events;
 
     void Reset()
     {
-        VoidBlast_Timer = 30000;
-        DarkShell_Timer = 20000;
         VoidBlast_Counter = 0;
     }
 
@@ -67,32 +70,14 @@ struct boss_pandemoniusAI : public ScriptedAI
 
     void KilledUnit(Unit*)
     {
-        switch (rand() % 2)
-        {
-        case 0:
-            DoScriptText(SAY_KILL_1, me);
-            break;
-        case 1:
-            DoScriptText(SAY_KILL_2, me);
-            break;
-        }
+        DoScriptText(RAND(SAY_KILL_1, SAY_KILL_2), me);
     }
 
     void EnterCombat(Unit*)
     {
-        switch (rand() % 3)
-        {
-        case 0:
-            DoScriptText(SAY_AGGRO_1, me);
-            break;
-        case 1:
-            DoScriptText(SAY_AGGRO_2, me);
-            break;
-        case 2:
-            DoScriptText(SAY_AGGRO_3, me);
-            break;
-        }
-
+        DoScriptText(RAND(SAY_AGGRO_1, SAY_AGGRO_2, SAY_AGGRO_3), me);
+        events.ScheduleEvent(EVENT_VOIDBLAST, 30000);
+        events.ScheduleEvent(EVENT_DARKSHELL, 20000);
     }
 
     void UpdateAI(const uint32 diff)
@@ -100,36 +85,24 @@ struct boss_pandemoniusAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (VoidBlast_Timer <= diff)
+        if (me->HasUnitState(UNIT_STATE_CASTING))
+            return;
+
+        events.Update(diff);
+
+        Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0);
+
+        switch (events.ExecuteEvent())
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-            {
-                DoCast(pTarget, HeroicMode ? H_SPELL_VOID_BLAST : SPELL_VOID_BLAST);
-                VoidBlast_Timer = 500;
-                ++VoidBlast_Counter;
-            }
-
-            if (VoidBlast_Counter == 5)
-            {
-                VoidBlast_Timer = 25000 + rand() % 10000;
-                VoidBlast_Counter = 0;
-            }
-        }
-        else VoidBlast_Timer -= diff;
-
-        if (!VoidBlast_Counter)
-        {
-            if (DarkShell_Timer <= diff)
-            {
-                if (me->IsNonMeleeSpellCast(false))
-                    me->InterruptNonMeleeSpells(true);
-
-                DoScriptText(EMOTE_DARK_SHELL, me);
-
-                DoCast(me, HeroicMode ? H_SPELL_DARK_SHELL : SPELL_DARK_SHELL);
-                DarkShell_Timer = 20000;
-            }
-            else DarkShell_Timer -= diff;
+        case EVENT_VOIDBLAST:
+            DoCast(target, HeroicMode ? H_SPELL_VOID_BLAST : SPELL_VOID_BLAST);
+            events.Repeat(25000 + rand() % 10000);
+            break;
+        case EVENT_DARKSHELL:
+            DoCast(me, HeroicMode ? H_SPELL_DARK_SHELL : SPELL_DARK_SHELL);
+            DoScriptText(EMOTE_DARK_SHELL, me);
+            events.Repeat(20000);
+            break;
         }
 
         DoMeleeAttackIfReady();

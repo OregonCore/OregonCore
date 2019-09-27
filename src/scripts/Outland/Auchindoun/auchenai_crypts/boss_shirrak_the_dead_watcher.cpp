@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -25,20 +25,29 @@ EndScriptData */
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 
-#define SPELL_INHIBITMAGIC          32264
-#define SPELL_ATTRACTMAGIC          32265
-#define N_SPELL_CARNIVOROUSBITE     36383
-#define H_SPELL_CARNIVOROUSBITE     39382
-#define SPELL_CARNIVOROUSBITE       (HeroicMode?H_SPELL_CARNIVOROUSBITE:N_SPELL_CARNIVOROUSBITE)
+enum eShirrak
+{
+    SPELL_INHIBIT_MAGIC             = 32264,
+    SPELL_ATTRACT_MAGIC             = 32265,
+    SPELL_CARNIVOROUS_BITE_N        = 36383,
+    SPELL_CARNIVOROUS_BITE_H        = 39382,
 
-#define ENTRY_FOCUS_FIRE            18374
+    SPELL_FIERY_BLAST_N             = 32302,
+    SPELL_FIERY_BLAST_H             = 38382,
+    SPELL_FOCUS_FIRE_VISUAL         = 32286,
+    SPELL_FOCUS_CAST                = 32300,
 
-#define N_SPELL_FIERY_BLAST         32302
-#define H_SPELL_FIERY_BLAST         38382
-#define SPELL_FIERY_BLAST           (HeroicMode?H_SPELL_FIERY_BLAST:N_SPELL_FIERY_BLAST)
-#define SPELL_FOCUS_FIRE_VISUAL     42075 //need to find better visual
+    EVENT_SPELL_INHIBIT_MAGIC       = 1,
+    EVENT_SPELL_ATTRACT_MAGIC       = 2,
+    EVENT_SPELL_CARNIVOROUS         = 3,
+    EVENT_SPELL_FOCUS_FIRE          = 4,
+    EVENT_SPELL_FOCUS_FIRE_2        = 5,
+    EVENT_SPELL_FOCUS_FIRE_3        = 6,
+    EVENT_SPELL_FIRE_BLAST          = 7,
 
-#define EMOTE_FOCUSES_ON            "focuses on "
+    ENTRY_FOCUS_FIRE                = 18374,
+
+};
 
 struct boss_shirrak_the_dead_watcherAI : public ScriptedAI
 {
@@ -47,106 +56,119 @@ struct boss_shirrak_the_dead_watcherAI : public ScriptedAI
         HeroicMode = me->GetMap()->IsHeroic();
     }
 
-    uint32 Inhibitmagic_Timer;
-    uint32 Attractmagic_Timer;
-    uint32 Carnivorousbite_Timer;
-    uint32 FocusFire_Timer;
+    EventMap events;
+    uint64 focusGUID;
     bool HeroicMode;
-    Unit* focusedTarget;
+    std::ostringstream emote;
 
     void Reset()
     {
-        Inhibitmagic_Timer = 0;
-        Attractmagic_Timer = 28000;
-        Carnivorousbite_Timer = 10000;
-        FocusFire_Timer = 17000;
-        focusedTarget = NULL;
+        events.Reset();
+        focusGUID = 0;
+        me->SetControlled(false, UNIT_STATE_ROOT);
+    }
+
+    void EnterEvadeMode()
+    {
+        me->SetControlled(false, UNIT_STATE_ROOT);
+        ScriptedAI::EnterEvadeMode();
     }
 
     void EnterCombat(Unit*)
-    { }
+    { 
+        events.ScheduleEvent(EVENT_SPELL_INHIBIT_MAGIC, 0);
+        events.ScheduleEvent(EVENT_SPELL_ATTRACT_MAGIC, 28000);
+        events.ScheduleEvent(EVENT_SPELL_CARNIVOROUS, 10000);
+        events.ScheduleEvent(EVENT_SPELL_FOCUS_FIRE, 17000);
+    }
 
-    void JustSummoned(Creature* summoned)
+    void JustSummoned(Creature* summon)
     {
-        if (summoned && summoned->GetEntry() == ENTRY_FOCUS_FIRE)
-        {
-            summoned->CastSpell(summoned, SPELL_FOCUS_FIRE_VISUAL, false);
-            summoned->SetFaction(me->GetFaction());
-            summoned->SetLevel(me->getLevel());
-            summoned->AddUnitState(UNIT_STATE_ROOT);
+        summon->CastSpell(summon, SPELL_FOCUS_FIRE_VISUAL, true);
+    }
 
-            if (focusedTarget)
-                summoned->AI()->AttackStart(focusedTarget);
-        }
+    void SpellHitTarget(Unit* target, const SpellEntry* spellInfo)
+    {
+        if (spellInfo->Id == SPELL_FOCUS_CAST)
+            target->CastSpell(target, HeroicMode ? SPELL_FIERY_BLAST_H :  SPELL_FIERY_BLAST_N, false);
+    }
+
+    uint8 getStackCount(float dist)
+    {
+        if (dist < 15)
+            return 4;
+        if (dist < 25)
+            return 3;
+        if (dist < 35)
+            return 2;
+        return 1;
     }
 
     void UpdateAI(const uint32 diff)
     {
-        //Inhibitmagic_Timer
-        if (Inhibitmagic_Timer <= diff)
-        {
-            float dist;
-            Map* map = me->GetMap();
-            Map::PlayerList const& PlayerList = map->GetPlayers();
-            for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
-                if (Player* i_pl = i->GetSource())
-                    if (i_pl->IsAlive() && (dist = i_pl->GetDistance(me)) < 45)
-                    {
-                        i_pl->RemoveAurasDueToSpell(SPELL_INHIBITMAGIC);
-                        me->AddAura(SPELL_INHIBITMAGIC, i_pl);
-                        if (dist < 35)
-                            me->AddAura(SPELL_INHIBITMAGIC, i_pl);
-                        if (dist < 25)
-                            me->AddAura(SPELL_INHIBITMAGIC, i_pl);
-                        if (dist < 15)
-                            me->AddAura(SPELL_INHIBITMAGIC, i_pl);
-                    }
-            Inhibitmagic_Timer = 3000 + (rand() % 1000);
-        }
-        else Inhibitmagic_Timer -= diff;
-
         //Return since we have no target
         if (!UpdateVictim())
             return;
 
-        //Attractmagic_Timer
-        if (Attractmagic_Timer <= diff)
+        events.Update(diff);
+        
+        switch (events.ExecuteEvent())
         {
-            DoCast(me, SPELL_ATTRACTMAGIC);
-            Attractmagic_Timer = 30000;
-            Carnivorousbite_Timer = 1500;
-        }
-        else Attractmagic_Timer -= diff;
+        case EVENT_SPELL_INHIBIT_MAGIC:
+        {
+            Map::PlayerList const& PlayerList = me->GetMap()->GetPlayers();
+            for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+                if (Player* i_pl = i->GetSource())
+                {
+                    float dist = me->GetDistance(i_pl);
+                    if (i_pl->IsAlive() && dist < 45.0f)
+                    {
+                        Aura* aura = i_pl->GetAura(SPELL_INHIBIT_MAGIC, NULL);
+                        if (!aura)
+                            me->AddAura(SPELL_INHIBIT_MAGIC, i_pl);
 
-        //Carnivorousbite_Timer
-        if (Carnivorousbite_Timer <= diff)
-        {
-            DoCast(me, SPELL_CARNIVOROUSBITE);
-            Carnivorousbite_Timer = 10000;
+                        if (aura)
+                            aura->SetStackAmount(getStackCount(dist));
+                    }
+                    else
+                        i_pl->RemoveAurasDueToSpell(SPELL_INHIBIT_MAGIC);
+                }
+            events.Repeat(3000);
+            break;
         }
-        else Carnivorousbite_Timer -= diff;
+        case EVENT_SPELL_ATTRACT_MAGIC:
+            me->CastSpell(me, SPELL_ATTRACT_MAGIC, false);
+            events.Repeat(30000);
+            events.RescheduleEvent(EVENT_SPELL_CARNIVOROUS, 1500);
+            break;
 
-        //FocusFire_Timer
-        if (FocusFire_Timer <= diff)
-        {
-            // Summon Focus Fire & Emote
-            Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
-            if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER && pTarget->IsAlive())
+        case EVENT_SPELL_CARNIVOROUS:
+            me->CastSpell(me, HeroicMode ? SPELL_CARNIVOROUS_BITE_H : SPELL_CARNIVOROUS_BITE_N, false);
+            events.Repeat(10000);
+            break;
+        case EVENT_SPELL_FOCUS_FIRE:
+            if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 60.0f, true))
             {
-                focusedTarget = pTarget;
-                me->SummonCreature(ENTRY_FOCUS_FIRE, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 5500);
-
-                // Emote
-                std::string* emote = new std::string(EMOTE_FOCUSES_ON);
-                emote->append(pTarget->GetName());
-                emote->append("!");
-                const char* text = emote->c_str();
-                me->MonsterTextEmote(text, 0, true);
-                delete emote;
+                if (Creature* cr = me->SummonCreature(ENTRY_FOCUS_FIRE, target->GetPositionX(), target->GetPositionY(), target->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 7000))
+                    focusGUID = cr->GetGUID();
             }
-            FocusFire_Timer = 15000 + (rand() % 5000);
+            emote << me->GetName() << " Is Focusing on " << me->GetVictim()->GetName();
+            me->MonsterTextEmote(emote.str().c_str(), 0, true);
+            events.Repeat(urand(15000, 20000));
+            events.ScheduleEvent(EVENT_SPELL_FOCUS_FIRE_2, 3000);
+            events.ScheduleEvent(EVENT_SPELL_FOCUS_FIRE_2, 3500);
+            events.ScheduleEvent(EVENT_SPELL_FOCUS_FIRE_2, 4000);
+            events.ScheduleEvent(EVENT_SPELL_FOCUS_FIRE_3, 5000);
+            me->SetControlled(true, UNIT_STATE_ROOT);
+            break;
+        case EVENT_SPELL_FOCUS_FIRE_2:
+            if (Unit* flare = ObjectAccessor::GetCreature(*me, focusGUID))
+                me->CastSpell(flare, SPELL_FOCUS_CAST, true);
+            break;
+        case EVENT_SPELL_FOCUS_FIRE_3:
+            me->SetControlled(false, UNIT_STATE_ROOT);
+            break;
         }
-        else FocusFire_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
@@ -165,17 +187,12 @@ struct mob_focus_fireAI : public ScriptedAI
     }
 
     bool HeroicMode;
-    uint32 FieryBlast_Timer;
-    bool fiery1, fiery2;
-
-    void Reset()
-    {
-        FieryBlast_Timer = 3000 + (rand() % 1000);
-        fiery1 = fiery2 = true;
-    }
+    EventMap events;
 
     void EnterCombat(Unit*)
-    { }
+    { 
+        events.ScheduleEvent(EVENT_SPELL_FIRE_BLAST, 3000 + (rand() % 1000));
+    }
 
     void UpdateAI(const uint32 diff)
     {
@@ -183,19 +200,15 @@ struct mob_focus_fireAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        //FieryBlast_Timer
-        if (fiery2 && FieryBlast_Timer <= diff)
+        events.Update(diff);
+
+        switch (events.ExecuteEvent())
         {
-            DoCast(me, SPELL_FIERY_BLAST);
-
-            if (fiery1) fiery1 = false;
-            else if (fiery2) fiery2 = false;
-
-            FieryBlast_Timer = 1000;
+        case EVENT_SPELL_FIRE_BLAST:
+            DoCast(me, HeroicMode ? SPELL_FIERY_BLAST_H : SPELL_FIERY_BLAST_N, false);
+            events.Repeat(1000);
+            break;
         }
-        else FieryBlast_Timer -= diff;
-
-        //DoMeleeAttackIfReady();
     }
 };
 

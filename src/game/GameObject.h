@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef OREGONCORE_GAMEOBJECT_H
@@ -504,21 +504,6 @@ struct GameObjectInfo
         }
     }
 
-    bool IsLargeGameObject() const
-    {
-        switch (type)
-        {
-        case GAMEOBJECT_TYPE_BUTTON:            return button.large != 0;
-        case GAMEOBJECT_TYPE_QUESTGIVER:        return questgiver.large != 0;
-        case GAMEOBJECT_TYPE_GENERIC:           return _generic.large != 0;
-        case GAMEOBJECT_TYPE_TRAP:              return trap.large != 0;
-        case GAMEOBJECT_TYPE_SPELL_FOCUS:       return spellFocus.large != 0;
-        case GAMEOBJECT_TYPE_GOOBER:            return goober.large != 0;
-        case GAMEOBJECT_TYPE_CAPTURE_POINT:     return capturePoint.large != 0;
-        default: return false;
-        }
-    }
-
     std::string GetAIName() const
     {
         return AIName;
@@ -554,9 +539,6 @@ struct GameObjectData
     explicit GameObjectData() : dbData(true) {}
     uint32 id;                                              // entry in gamobject_template
     uint32 mapid;
-    uint32 phaseMask;
-    uint32 zoneId;
-    uint32 areaId;
     float posX;
     float posY;
     float posZ;
@@ -603,7 +585,9 @@ class GameObject : public WorldObject, public GridObject<GameObject>
         void RemoveFromWorld() override;
         void CleanupsBeforeDelete() override;
 
-        bool Create(uint32 guidlow, uint32 name_id, Map* map, uint32 phaseMask, float x, float y, float z, float ang, float rotation0, float rotation1, float rotation2, float rotation3, uint32 animprogress, GOState go_state, uint32 ArtKit = 0);
+        void RemoveFromOwner();
+
+        bool Create(uint32 guidlow, uint32 name_id, Map* map, float x, float y, float z, float ang, float rotation0, float rotation1, float rotation2, float rotation3, uint32 animprogress, GOState go_state, uint32 ArtKit = 0);
         void Update(uint32 diff) override;
         static GameObject* GetGameObject(WorldObject& object, uint64 guid);
         GameObjectInfo const* GetGOInfo() const
@@ -616,7 +600,6 @@ class GameObject : public WorldObject, public GridObject<GameObject>
         }
 
         void SetGoState(GOState state);
-        void SetPhaseMask(uint32 newPhaseMask, bool update) override;
         void EnableCollision(bool enable);
 
         bool IsTransport() const;
@@ -665,7 +648,7 @@ class GameObject : public WorldObject, public GridObject<GameObject>
         const char* GetNameForLocaleIdx(int32 locale_idx) const override;
 
         void SaveToDB();
-        void SaveToDB(uint32 mapid, uint8 spawnMask, uint32 phaseMask);
+        void SaveToDB(uint32 mapid, uint8 spawnMask);
         bool LoadFromDB(uint32 guid, Map* map) { return LoadGameObjectFromDB(guid, map, false); }
         bool LoadGameObjectFromDB(uint32 guid, Map* map, bool addToMap = true);
         void DeleteFromDB();

@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "ScriptedCreature.h"
@@ -30,6 +30,29 @@ struct TSpellSummary
     uint8 Targets;                                          // set of enum SelectTarget
     uint8 Effects;                                          // set of enum SelectEffect
 }* SpellSummary;
+
+Creature* SummonList::GetCreatureWithEntry(uint32 entry) const
+{
+    for (auto i = begin(); i != end();)
+    {
+        if (Creature* summon = ObjectAccessor::GetCreature(*me, *i))
+            if (summon->GetEntry() == entry)
+                return summon;
+    }
+
+    return NULL;
+}
+
+bool SummonList::HasEntry(uint32 entry) const
+{
+    for (auto i = begin(); i != end(); ++i)
+    {
+        Creature* summon = ObjectAccessor::GetCreature(*me, *i);
+        if (summon && summon->GetEntry() == entry)
+            return true;
+    }
+    return false;
+}
 
 void SummonList::DoZoneInCombat(uint32 entry)
 {
@@ -92,7 +115,7 @@ void SummonList::DespawnAll()
                 CAST_SUM(summon)->UnSummon();
             }
             else
-                summon->DisappearAndDie();
+                summon->DisappearAndDie(false);
         }
     }
 }
@@ -477,7 +500,7 @@ Unit* ScriptedAI::DoSelectLowestHpFriendly(float fRange, uint32 uiMinHPDiff)
 {
     Unit* pUnit = NULL;
     Oregon::MostHPMissingInRange u_check(me, fRange, uiMinHPDiff);
-    Oregon::UnitLastSearcher<Oregon::MostHPMissingInRange> searcher(me, pUnit, u_check);
+    Oregon::UnitLastSearcher<Oregon::MostHPMissingInRange> searcher(pUnit, u_check);
     me->VisitNearbyObject(fRange, searcher);
 
     return pUnit;
@@ -487,7 +510,7 @@ std::list<Creature*> ScriptedAI::DoFindFriendlyCC(float fRange)
 {
     std::list<Creature*> pList;
     Oregon::FriendlyCCedInRange u_check(me, fRange);
-    Oregon::CreatureListSearcher<Oregon::FriendlyCCedInRange> searcher(me, pList, u_check);
+    Oregon::CreatureListSearcher<Oregon::FriendlyCCedInRange> searcher(pList, u_check);
     me->VisitNearbyObject(fRange, searcher);
     return pList;
 }
@@ -496,7 +519,7 @@ std::list<Creature*> ScriptedAI::DoFindFriendlyMissingBuff(float fRange, uint32 
 {
     std::list<Creature*> pList;
     Oregon::FriendlyMissingBuffInRange u_check(me, fRange, uiSpellid);
-    Oregon::CreatureListSearcher<Oregon::FriendlyMissingBuffInRange> searcher(me, pList, u_check);
+    Oregon::CreatureListSearcher<Oregon::FriendlyMissingBuffInRange> searcher(pList, u_check);
     me->VisitNearbyObject(fRange, searcher);
     return pList;
 }
@@ -510,7 +533,7 @@ Player* ScriptedAI::GetPlayerAtMinimumRange(float minimumRange)
     cell.SetNoCreate();
 
     Oregon::PlayerAtMinimumRangeAway check(me, minimumRange);
-    Oregon::PlayerSearcher<Oregon::PlayerAtMinimumRangeAway> searcher(me, pPlayer, check);
+    Oregon::PlayerSearcher<Oregon::PlayerAtMinimumRangeAway> searcher(pPlayer, check);
     TypeContainerVisitor<Oregon::PlayerSearcher<Oregon::PlayerAtMinimumRangeAway>, GridTypeMapContainer> visitor(searcher);
 
     cell.Visit(pair, visitor, *me->GetMap(), *me, minimumRange);
@@ -672,6 +695,26 @@ void LoadOverridenSQLData()
     if (goInfo)
         if (goInfo->type == GAMEOBJECT_TYPE_TRAP)
             goInfo->trap.radius = 50;
+}
+
+Player* ScriptedAI::SelectTargetFromPlayerList(float maxdist, uint32 excludeAura, bool mustBeInLOS) const
+{
+    Map::PlayerList const& pList = me->GetMap()->GetPlayers();
+    std::vector<Player*> tList;
+    for (Map::PlayerList::const_iterator itr = pList.begin(); itr != pList.end(); ++itr)
+    {
+        if (me->GetDistance(itr->GetSource()) > maxdist || !itr->GetSource()->IsAlive() || itr->GetSource()->IsGameMaster())
+            continue;
+        if (excludeAura && itr->GetSource()->HasAura(excludeAura))
+            continue;
+        if (mustBeInLOS && !me->IsWithinLOSInMap(itr->GetSource()))
+            continue;
+        tList.push_back(itr->GetSource());
+    }
+    if (!tList.empty())
+        return tList[urand(0, tList.size() - 1)];
+    else
+        return nullptr;
 }
 
 // SD2 grid searchers.

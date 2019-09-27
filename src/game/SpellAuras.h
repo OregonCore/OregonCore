@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef OREGON_SPELLAURAS_H
@@ -213,7 +213,6 @@ class Aura
         void HandleAuraReflectSpellSchool(bool apply, bool Real);
         void HandleIncreasePetOutdoorSpeed(bool apply, bool Real);
         void HandleAuraCloneCaster(bool apply, bool Real);
-        void HandlePhase(bool apply, bool Real);
 
         virtual ~Aura();
 

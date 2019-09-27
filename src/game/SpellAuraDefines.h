@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef OREGON_SPELLAURADEFINES_H
@@ -298,7 +298,7 @@ enum AuraType
     SPELL_AURA_258 = 258,
     SPELL_AURA_259 = 259,
     SPELL_AURA_260 = 260,
-    SPELL_AURA_PHASE = 261,
+    SPELL_AURA_261 = 261,
     TOTAL_AURAS = 262
 };
 

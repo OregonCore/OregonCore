@@ -1,0 +1,1 @@
+UPDATE creature_template SET Scale = 1.35 WHERE Entry IN (4046, 11117);

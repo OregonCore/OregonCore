@@ -12,7 +12,7 @@
 * more details.
 *
 * You should have received a copy of the GNU General Public License along
-* with this program. If not, see <https://www.gnu.org/licenses/>.
+* with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 #ifndef TRINITY_CREATURE_TEXT_MGR_H
@@ -240,7 +240,7 @@ void CreatureTextMgr::SendChatPacket(WorldObject* source, Builder const& builder
     }
 
     float dist = GetRangeForChatType(msgType);
-    Oregon::PlayerDistWorker<CreatureTextLocalizer<Builder> > worker(source, dist, localizer);
+    Oregon::PlayerDistWorker<CreatureTextLocalizer<Builder> > worker(dist, localizer);
     source->VisitNearbyWorldObject(dist, worker);
 }
 

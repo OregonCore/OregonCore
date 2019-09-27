@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -58,7 +58,8 @@ enum eCatFigurine
 
 bool GOHello_go_cat_figurine(Player* pPlayer, GameObject* /*pGO*/)
 {
-    pPlayer->CastSpell(pPlayer, SPELL_SUMMON_GHOST_SABER, true);
+    if (rand() % 100 < 25) // give 25% chance of summoning tiger
+        pPlayer->CastSpell(pPlayer, SPELL_SUMMON_GHOST_SABER, true);
     return false;
 }
 

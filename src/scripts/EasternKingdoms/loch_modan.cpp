@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -174,6 +174,6 @@ void AddSC_loch_modan()
     newscript = new Script;
     newscript->Name = "npc_miran";
     newscript->GetAI = &GetAI_npc_miran;
-    newscript->QuestAccept = &QuestAccept_npc_miran;
+    newscript->pQuestAccept = &QuestAccept_npc_miran;
     newscript->RegisterSelf();
 }

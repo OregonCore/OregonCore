@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -29,6 +29,30 @@ EndContentData */
 
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
+
+/*#####
+## Quest: Bride of the Embalmer (Grave dirt)
+#####*/
+enum misc
+{
+    QUEST_BRIDE_OF_THE_EMBER = 253,
+    NPC_ELIZA = 314,
+};
+
+bool GOHello_go_grave_dirt(Player* pPlayer, GameObject* pGO)
+{
+    if (pGO->FindNearestCreature(NPC_ELIZA, 100.0f, true))
+        return false;
+
+    if (pPlayer->GetQuestStatus(QUEST_BRIDE_OF_THE_EMBER) == QUEST_STATUS_INCOMPLETE)
+    {
+        pGO->SummonCreature(NPC_ELIZA, pGO->GetPosition(), TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5 * MINUTE*IN_MILLISECONDS);
+        return true;
+
+    }
+    return true;
+}
+
 
 /*#####
 ## Quest: The Nightmare's Corruption
@@ -152,5 +176,10 @@ void AddSC_duskwood()
     newscript = new Script;
     newscript->Name = "at_twilight_grove";
     newscript->pAreaTrigger = &AreaTrigger_at_twilight_grove;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "go_grave_dirt";
+    newscript->pGOHello = &GOHello_go_grave_dirt;
     newscript->RegisterSelf();
 }

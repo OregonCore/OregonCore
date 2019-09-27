@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -402,7 +402,7 @@ struct boss_headless_horsemanAI : public ScriptedAI
         if (headGUID)
         {
             if (Creature* Head = Unit::GetCreature((*me), headGUID))
-                Head->DisappearAndDie();
+                Head->DisappearAndDie(false);
 
             headGUID = 0;
         }

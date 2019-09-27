@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef _MAP_UPDATER_H_INCLUDED
@@ -29,7 +29,7 @@ class MapUpdater
 {
     public:
 
-        MapUpdater() : m_executor(), m_mutex(), m_condition(m_mutex), pending_requests(0) {}
+        MapUpdater() : m_executor(), m_condition(m_mutex), m_mutex(), pending_requests(0) {}
         ~MapUpdater() { };
 
         friend class MapUpdateRequest;

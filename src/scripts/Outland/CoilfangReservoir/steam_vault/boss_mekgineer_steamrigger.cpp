@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -31,51 +31,48 @@ EndContentData */
 #include "ScriptedCreature.h"
 #include "steam_vault.h"
 
-#define SAY_MECHANICS               -1545007
-#define SAY_AGGRO_1                 -1545008
-#define SAY_AGGRO_2                 -1545009
-#define SAY_AGGRO_3                 -1545010
-#define SAY_AGGRO_4                 -1545011
-#define SAY_SLAY_1                  -1545012
-#define SAY_SLAY_2                  -1545013
-#define SAY_SLAY_3                  -1545014
-#define SAY_DEATH                   -1545015
+enum MekgineerSteamrigger
+{
+    SAY_MECHANICS               = - 1545007,
+    SAY_AGGRO_1                 = - 1545008,
+    SAY_AGGRO_2                 = - 1545009,
+    SAY_AGGRO_3                 = - 1545010,
+    SAY_AGGRO_4                 = - 1545011,
+    SAY_SLAY_1                  = - 1545012,
+    SAY_SLAY_2                  = - 1545013,
+    SAY_SLAY_3                  = - 1545014,
+    SAY_DEATH                   = - 1545015,
 
-#define SPELL_SUPER_SHRINK_RAY      31485
-#define SPELL_SAW_BLADE             31486
-#define SPELL_ELECTRIFIED_NET       35107
-#define H_SPELL_ENRAGE              1                       //corrent enrage spell not known
+    SPELL_SUPER_SHRINK_RAY      = 31485,
+    SPELL_SAW_BLADE             = 31486,
+    SPELL_ELECTRIFIED_NET       = 35107,
+    SPELL_REPAIR_N              = 31532,
+    SPELL_REPAIR_H              = 37936,
 
-#define ENTRY_STREAMRIGGER_MECHANIC 17951
+    NPC_STREAMRIGGER_MECHANIC   = 17951,
+
+    EVENT_CHECK_HP25            = 1,
+    EVENT_CHECK_HP50            = 2,
+    EVENT_CHECK_HP75            = 3,
+    EVENT_SPELL_SHRINK          = 4,
+    EVENT_SPELL_SAW             = 5,
+    EVENT_SPELL_NET             = 6
+};
 
 struct boss_mekgineer_steamriggerAI : public ScriptedAI
 {
-    boss_mekgineer_steamriggerAI(Creature* c) : ScriptedAI(c)
+    boss_mekgineer_steamriggerAI(Creature* c) : ScriptedAI(c), summons(me)
     {
         pInstance = (ScriptedInstance*)c->GetInstanceData();
-        HeroicMode = me->GetMap()->IsHeroic();
     }
 
     ScriptedInstance* pInstance;
-    bool HeroicMode;
-
-    uint32 Shrink_Timer;
-    uint32 Saw_Blade_Timer;
-    uint32 Electrified_Net_Timer;
-    bool Summon75;
-    bool Summon50;
-    bool Summon25;
+    EventMap events;
+    SummonList summons;
 
     void Reset()
     {
-        Shrink_Timer = 20000;
-        Saw_Blade_Timer = 15000;
-        Electrified_Net_Timer = 10000;
-
-        Summon75 = false;
-        Summon50 = false;
-        Summon25 = false;
-
+        events.Reset();
         if (pInstance && me->IsAlive())
             pInstance->SetData(TYPE_MEKGINEER_STEAMRIGGER, NOT_STARTED);
     }
@@ -84,40 +81,27 @@ struct boss_mekgineer_steamriggerAI : public ScriptedAI
     {
         DoScriptText(SAY_DEATH, me);
 
+        summons.DespawnAll();
+
         if (pInstance)
             pInstance->SetData(TYPE_MEKGINEER_STEAMRIGGER, DONE);
     }
 
-    void KilledUnit(Unit* /*victim*/)
+    void KilledUnit(Unit* victim)
     {
-        switch (rand() % 3)
-        {
-        case 0:
-            DoScriptText(SAY_SLAY_1, me);
-            break;
-        case 1:
-            DoScriptText(SAY_SLAY_2, me);
-            break;
-        case 2:
-            DoScriptText(SAY_SLAY_3, me);
-            break;
-        }
+        DoScriptText(RAND(SAY_SLAY_1, SAY_SLAY_2, SAY_SLAY_3), me);
     }
 
     void EnterCombat(Unit* /*who*/)
     {
-        switch (rand() % 3)
-        {
-        case 0:
-            DoScriptText(SAY_AGGRO_1, me);
-            break;
-        case 1:
-            DoScriptText(SAY_AGGRO_2, me);
-            break;
-        case 2:
-            DoScriptText(SAY_AGGRO_3, me);
-            break;
-        }
+        DoScriptText(RAND(SAY_AGGRO_1, SAY_AGGRO_2, SAY_AGGRO_3), me);
+
+        events.ScheduleEvent(EVENT_SPELL_SHRINK, 20000);
+        events.ScheduleEvent(EVENT_SPELL_SAW, 15000);
+        events.ScheduleEvent(EVENT_SPELL_NET, 10000);
+        events.ScheduleEvent(EVENT_CHECK_HP75, 5000);
+        events.ScheduleEvent(EVENT_CHECK_HP50, 5000);
+        events.ScheduleEvent(EVENT_CHECK_HP25, 5000);
 
         if (pInstance)
             pInstance->SetData(TYPE_MEKGINEER_STEAMRIGGER, IN_PROGRESS);
@@ -128,14 +112,20 @@ struct boss_mekgineer_steamriggerAI : public ScriptedAI
     {
         DoScriptText(SAY_MECHANICS, me);
 
-        DoSpawnCreature(ENTRY_STREAMRIGGER_MECHANIC, 5, 5, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 240000);
-        DoSpawnCreature(ENTRY_STREAMRIGGER_MECHANIC, -5, 5, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 240000);
-        DoSpawnCreature(ENTRY_STREAMRIGGER_MECHANIC, -5, -5, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 240000);
+        me->SummonCreature(NPC_STREAMRIGGER_MECHANIC, me->GetPositionX() + 15.0f, me->GetPositionY() + 15.0f, me->GetPositionZ(), 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+        me->SummonCreature(NPC_STREAMRIGGER_MECHANIC, me->GetPositionX() - 15.0f, me->GetPositionY() + 15.0f, me->GetPositionZ(), 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+        me->SummonCreature(NPC_STREAMRIGGER_MECHANIC, me->GetPositionX() - 15.0f, me->GetPositionY() - 15.0f, me->GetPositionZ(), 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+        if (urand(0, 1))
+            me->SummonCreature(NPC_STREAMRIGGER_MECHANIC, me->GetPositionX() + 15.0f, me->GetPositionY() - 15.0f, me->GetPositionZ(), 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
 
-        if (rand() % 2)
-            DoSpawnCreature(ENTRY_STREAMRIGGER_MECHANIC, 5, -7, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 240000);
-        if (rand() % 2)
-            DoSpawnCreature(ENTRY_STREAMRIGGER_MECHANIC, 7, -5, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 240000);
+    }
+
+
+    void JustSummoned(Creature* cr)
+    {
+        cr->GetMotionMaster()->MoveFollow(me, 0.0f, 0.0f);
+
+        summons.Summon(cr);
     }
 
     void UpdateAI(const uint32 diff)
@@ -143,56 +133,37 @@ struct boss_mekgineer_steamriggerAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (Shrink_Timer <= diff)
-        {
-            DoCastVictim(SPELL_SUPER_SHRINK_RAY);
-            Shrink_Timer = 20000;
-        }
-        else Shrink_Timer -= diff;
+        events.Update(diff);
 
-        if (Saw_Blade_Timer <= diff)
+        switch (uint32 eventId = events.ExecuteEvent())
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1))
-                DoCast(pTarget, SPELL_SAW_BLADE);
+        case EVENT_SPELL_SHRINK:
+            me->CastSpell(me->GetVictim(), SPELL_SUPER_SHRINK_RAY, false);
+            events.Repeat(20000);
+            break;
+        case EVENT_SPELL_SAW:
+            if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 1))
+                me->CastSpell(target, SPELL_SAW_BLADE, false);
             else
-                DoCastVictim(SPELL_SAW_BLADE);
-
-            Saw_Blade_Timer = 15000;
-        }
-        else Saw_Blade_Timer -= diff;
-
-        if (Electrified_Net_Timer <= diff)
-        {
-            DoCastVictim(SPELL_ELECTRIFIED_NET);
-            Electrified_Net_Timer = 10000;
-        }
-        else Electrified_Net_Timer -= diff;
-
-        if (!Summon75)
-        {
-            if (HealthBelowPct(75))
+                me->CastSpell(me->GetVictim(), SPELL_SAW_BLADE, false);
+            events.Repeat(15000);
+            break;
+        case EVENT_SPELL_NET:
+            if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
+                me->CastSpell(target, SPELL_ELECTRIFIED_NET, false);
+            events.Repeat(10000);
+            break;
+        case EVENT_CHECK_HP25:
+        case EVENT_CHECK_HP50:
+        case EVENT_CHECK_HP75:
+            if (me->HealthBelowPct(eventId * 25))
             {
                 SummonMechanichs();
-                Summon75 = true;
+                events.ExecuteEvent();
+                return;
             }
-        }
-
-        if (!Summon50)
-        {
-            if (HealthBelowPct(50))
-            {
-                SummonMechanichs();
-                Summon50 = true;
-            }
-        }
-
-        if (!Summon25)
-        {
-            if (HealthBelowPct(25))
-            {
-                SummonMechanichs();
-                Summon25 = true;
-            }
+            events.Repeat(2000);
+            break;
         }
 
         DoMeleeAttackIfReady();
@@ -221,52 +192,36 @@ struct mob_steamrigger_mechanicAI : public ScriptedAI
 
     ScriptedInstance* pInstance;
     bool HeroicMode;
-
-    uint32 Repair_Timer;
+    uint32 repairTimer;
+    uint64 bossGUID;
 
     void Reset()
     {
-        Repair_Timer = 2000;
+        repairTimer = 0;
+        bossGUID = 0;
+        if (pInstance)
+                bossGUID = pInstance->GetData64(DATA_MEKGINEERSTEAMRIGGER);
     }
 
-    void MoveInLineOfSight(Unit* /*who*/)
-    {
-        //react only if attacked
-        return;
-    }
+    void MoveInLineOfSight(Unit* /*who*/){}
 
     void EnterCombat(Unit* /*who*/) { }
 
     void UpdateAI(const uint32 diff)
     {
-        if (Repair_Timer <= diff)
-        {
-            if (pInstance && pInstance->GetData64(DATA_MEKGINEERSTEAMRIGGER) && pInstance->GetData(TYPE_MEKGINEER_STEAMRIGGER) == IN_PROGRESS)
-            {
-                if (Unit* pMekgineer = Unit::GetUnit((*me), pInstance->GetData64(DATA_MEKGINEERSTEAMRIGGER)))
-                {
-                    if (me->IsWithinDistInMap(pMekgineer, MAX_REPAIR_RANGE))
-                    {
-                        //are we already channeling? Doesn't work very well, find better check?
-                        if (!me->GetUInt32Value(UNIT_CHANNEL_SPELL))
-                        {
-                            //me->GetMotionMaster()->MovementExpired();
-                            //me->GetMotionMaster()->MoveIdle();
+        repairTimer += diff;
 
-                            DoCast(me, HeroicMode ? H_SPELL_REPAIR : SPELL_REPAIR, true);
-                        }
-                        Repair_Timer = 5000;
-                    }
-                    else
-                    {
-                        //me->GetMotionMaster()->MovementExpired();
-                        //me->GetMotionMaster()->MoveFollow(pMekgineer,0,0);
-                    }
-                }
+        if (repairTimer >= 2000)
+        {
+            repairTimer = 0;
+            if (Unit* boss = ObjectAccessor::GetUnit(*me, bossGUID))
+            {
+                if (me->IsWithinDistInMap(boss, 13.0f))
+                    if (!me->HasUnitState(UNIT_STATE_CASTING))
+                        me->CastSpell(me, HeroicMode ? SPELL_REPAIR_H : SPELL_REPAIR_N, false);
             }
-            else Repair_Timer = 5000;
+            return;
         }
-        else Repair_Timer -= diff;
 
         if (!UpdateVictim())
             return;

@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "ScriptPCH.h"
@@ -263,6 +263,7 @@ void AddSC_boss_amnennar_the_coldbringer();  //Razorfen Downs
 void AddSC_razorfen_downs();
 void AddSC_instance_razorfen_downs();
 void AddSC_razorfen_kraul();                 //Razorfen Kraul
+void AddSC_instance_razorfen_kraul();
 void AddSC_boss_kurinnaxx();                 //Ruins of ahn'qiraj
 void AddSC_boss_cthun();                     //Temple of ahn'qiraj
 void AddSC_boss_fankriss();
@@ -371,7 +372,9 @@ void AddSC_boss_high_astromancer_solarian();
 void AddSC_instance_the_eye();
 void AddSC_the_eye();
 void AddSC_boss_gatewatcher_iron_hand();     //TK The Mechanar
+void AddSC_boss_mechano_lord_capacitus();
 void AddSC_boss_nethermancer_sepethrea();
+void AddSC_boss_gatewatcher_gryo();
 void AddSC_boss_pathaleon_the_calculator();
 void AddSC_instance_mechanar();
 
@@ -632,6 +635,7 @@ void AddScripts()
     AddSC_razorfen_downs();
     AddSC_instance_razorfen_downs();
     AddSC_razorfen_kraul();                 //Razorfen Kraul
+    AddSC_instance_razorfen_kraul();
     AddSC_boss_kurinnaxx();                 //Ruins of ahn'qiraj
     AddSC_boss_cthun();                     //Temple of ahn'qiraj
     AddSC_boss_fankriss();
@@ -740,7 +744,9 @@ void AddScripts()
     AddSC_the_eye();
     AddSC_boss_gatewatcher_iron_hand();     //TK The Mechanar
     AddSC_boss_nethermancer_sepethrea();
+    AddSC_boss_gatewatcher_gryo();
     AddSC_boss_pathaleon_the_calculator();
+    AddSC_boss_mechano_lord_capacitus();
     AddSC_instance_mechanar();
 
     AddSC_blades_edge_mountains();

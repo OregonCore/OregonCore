@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -273,6 +273,6 @@ void AddSC_ghostlands()
     newscript = new Script;
     newscript->Name = "npc_ranger_lilatha";
     newscript->GetAI = &GetAI_npc_ranger_lilathaAI;
-    newscript->QuestAccept = &QuestAccept_npc_ranger_lilatha;
+    newscript->pQuestAccept = &QuestAccept_npc_ranger_lilatha;
     newscript->RegisterSelf();
 }

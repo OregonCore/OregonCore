@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "VMapFactory.h"
@@ -79,7 +79,8 @@ void LoadGameObjectModelList()
     }
 
     fclose(model_list_file);
-    sLog.outString(">> Loaded %u GameObject models.", uint32(model_list.size()));
+    sLog.outString(">> Loaded %u GameObject models in %u ms", uint32(model_list.size()), getMSTimeDiff(oldMSTime, getMSTime()));
+    sLog.outString();
 }
 
 GameObjectModel::~GameObjectModel()

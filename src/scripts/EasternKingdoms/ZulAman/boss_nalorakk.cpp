@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -162,7 +162,7 @@ struct boss_nalorakkAI : public ScriptedAI
             cell.SetNoCreate();
 
             Oregon::AllFriendlyCreaturesInGrid check(me);
-            Oregon::CreatureListSearcher<Oregon::AllFriendlyCreaturesInGrid> searcher(me, templist, check);
+            Oregon::CreatureListSearcher<Oregon::AllFriendlyCreaturesInGrid> searcher(templist, check);
             TypeContainerVisitor<Oregon::CreatureListSearcher<Oregon::AllFriendlyCreaturesInGrid>, GridTypeMapContainer> cSearcher(searcher);
             cell.Visit(pair, cSearcher, *(me->GetMap()), *me, me->GetGridActivationRange());
 

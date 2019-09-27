@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -170,7 +170,7 @@ void AddSC_stonetalon_mountains()
     newscript = new Script;
     newscript->Name = "npc_kaya_flathoof";
     newscript->GetAI = &GetAI_npc_kaya_flathoofAI;
-    newscript->QuestAccept = &QuestAccept_npc_kaya_flathoof;
+    newscript->pQuestAccept = &QuestAccept_npc_kaya_flathoof;
     newscript->RegisterSelf();
 }
 

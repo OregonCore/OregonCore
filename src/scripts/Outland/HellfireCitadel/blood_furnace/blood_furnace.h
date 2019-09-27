@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef DEF_BLOOD_FURNACE_H
@@ -21,6 +21,7 @@
 #define DATA_MAKEREVENT             1
 #define DATA_BROGGOKEVENT           2
 #define DATA_KELIDANEVENT           3
+
 
 enum GameObjectIds
 {
@@ -41,6 +42,11 @@ enum GameObjectIds
     GO_PRISON_CELL_DOOR_8       = 181817, // Broggok Prison Cell back left
 
     GO_BROGGOK_LEVER            = 181982
+};
+
+enum bloodFurnaceNPC
+{
+    NPC_CHANNELER               = 17653
 };
 
 #endif

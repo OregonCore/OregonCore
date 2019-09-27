@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -86,6 +86,7 @@ struct mob_voidtravelerAI : public ScriptedAI
         Vorpil = NULL;
         move = 0;
         sacrificed = false;
+        me->SetSpeed(MOVE_RUN, HeroicMode ? 0.5f : 0.7f);
     }
 
     void EnterCombat(Unit*) {}

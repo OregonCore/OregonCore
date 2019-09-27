@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef OREGON_FORMULAS_H
@@ -97,7 +97,7 @@ inline uint32 BaseGain(uint32 pl_level, uint32 mob_level, ContentLevels content)
     }
 }
 
-inline uint32 Gain(Player* pl, Unit* u)
+inline uint32 Gain(Player* pl, Unit* u, bool isBattleground)
 {
     if (u->GetTypeId() == TYPEID_UNIT && (
             ((Creature*)u)->IsTotem() || ((Creature*)u)->IsPet() ||

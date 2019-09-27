@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "MapManager.h"
@@ -159,10 +159,6 @@ Map::EnterState MapManager::PlayerCannotEnter(uint32 mapid, Player* player, bool
     if (!entry->IsDungeon())
         return Map::CAN_ENTER;
 
-    //Other requirements
-    if (!player->Satisfy(sObjectMgr.GetAccessRequirement(mapid), mapid, true))
-        return Map::CANNOT_ENTER_UNSPECIFIED_REASON;
-
     InstanceTemplate const* instance = sObjectMgr.GetInstanceTemplate(mapid);
     if (!instance)
         return Map::CANNOT_ENTER_UNINSTANCED_DUNGEON;
@@ -220,7 +216,10 @@ Map::EnterState MapManager::PlayerCannotEnter(uint32 mapid, Player* player, bool
 
     // @todo Implement 5 dungeons per hour limit
 
-    return Map::CAN_ENTER;
+    if (player->Satisfy(sObjectMgr.GetAccessRequirement(instance->access_id), mapid, true))
+        return Map::CAN_ENTER;
+    else
+        return Map::CANNOT_ENTER_UNSPECIFIED_REASON;
 }
 
 void MapManager::Update(time_t diff)

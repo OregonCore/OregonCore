@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Object.h"
@@ -22,6 +22,7 @@
 #include "GameObject.h"
 #include "MapManager.h"
 #include "Language.h"
+#include "World.h"
 
 // these variables aren't used outside of this file, so declare them only here
 enum BG_WSG_Rewards
@@ -66,28 +67,31 @@ void BattlegroundWS::Update(uint32 diff)
 
     if (GetStatus() == STATUS_IN_PROGRESS)
     {
-        if (GetStartTime() >= 25 * MINUTE * IN_MILLISECONDS)
+        if (sWorld.getConfig(CONFIG_WARSONG_TIMER))
         {
-            if (GetTeamScore(ALLIANCE) == 0)
+            if (GetStartTime() >= 25 * MINUTE * IN_MILLISECONDS)
             {
-                if (GetTeamScore(HORDE) == 0)   // No one scored - result is tie
-                    EndBattleground(TEAM_NONE);
-                else                            // Horde has more points and thus wins
+                if (GetTeamScore(ALLIANCE) == 0)
+                {
+                    if (GetTeamScore(HORDE) == 0)   // No one scored - result is tie
+                        EndBattleground(TEAM_NONE);
+                    else                            // Horde has more points and thus wins
+                        EndBattleground(HORDE);
+                }
+                else if (GetTeamScore(HORDE) == 0)
+                    EndBattleground(ALLIANCE);      // Alliance has > 0, Horde has 0, alliance wins
+                else if (GetTeamScore(HORDE) == GetTeamScore(ALLIANCE)) // Team score equal, winner is team that scored the first flag
+                    EndBattleground(Team(m_FirstFlagCaptureTeam));
+                else if (GetTeamScore(HORDE) > GetTeamScore(ALLIANCE)) // Last but not least, check who has the higher score
                     EndBattleground(HORDE);
+                else
+                    EndBattleground(ALLIANCE);
             }
-            else if (GetTeamScore(HORDE) == 0)
-                EndBattleground(ALLIANCE);      // Alliance has > 0, Horde has 0, alliance wins
-            else if (GetTeamScore(HORDE) == GetTeamScore(ALLIANCE)) // Team score equal, winner is team that scored the first flag
-                EndBattleground(Team(m_FirstFlagCaptureTeam));
-            else if (GetTeamScore(HORDE) > GetTeamScore(ALLIANCE)) // Last but not least, check who has the higher score
-                EndBattleground(HORDE);
-            else
-                EndBattleground(ALLIANCE);
-        }
-        else if (GetStartTime() > m_minutesElapsed * MINUTE * IN_MILLISECONDS)
-        {
-            ++m_minutesElapsed;
-            UpdateWorldState(BG_WS_STATE_TIMER, 25 - m_minutesElapsed);
+            else if (GetStartTime() > m_minutesElapsed * MINUTE * IN_MILLISECONDS)
+            {
+                ++m_minutesElapsed;
+                UpdateWorldState(BG_WS_STATE_TIMER, 25 - m_minutesElapsed);
+            }
         }
 
         if (m_FlagState[BG_TEAM_ALLIANCE] == BG_WS_FLAG_STATE_WAIT_RESPAWN)

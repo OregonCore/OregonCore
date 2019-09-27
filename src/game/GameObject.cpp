@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Common.h"
@@ -44,8 +44,9 @@
 #include "GameObjectModel.h"
 #include "DynamicTree.h"
 #include "Transports.h"
+#include "Log.h"
 
-GameObject::GameObject() : WorldObject(false), m_model(NULL), m_AI(NULL)
+GameObject::GameObject() : WorldObject(false), m_model(nullptr), m_AI(nullptr)
 {
     m_objectType |= TYPEMASK_GAMEOBJECT;
     m_objectTypeId = TYPEID_GAMEOBJECT;
@@ -54,15 +55,15 @@ GameObject::GameObject() : WorldObject(false), m_model(NULL), m_AI(NULL)
 
     m_valuesCount = GAMEOBJECT_END;
     m_respawnTime = 0;
-    m_respawnDelayTime = 25;
+    m_respawnDelayTime = 300;
     m_lootState = GO_NOT_READY;
     m_spawnedByDefault = true;
     m_usetimes = 0;
     m_spellId = 0;
     m_cooldownTime = 0;
-    m_goInfo = NULL;
+    m_goInfo = nullptr;
     m_ritualOwnerGUID = 0;
-    m_goData = NULL;
+    m_goData = nullptr;
 
     m_DBTableGuid = 0;
 }
@@ -75,7 +76,8 @@ GameObject::~GameObject()
 
 bool GameObject::AIM_Initialize()
 {
-    delete m_AI;
+    if (m_AI)
+        delete m_AI;
 
     m_AI = FactorySelector::SelectGameObjectAI(this);
 
@@ -86,32 +88,37 @@ bool GameObject::AIM_Initialize()
     return true;
 }
 
+std::string GameObject::GetAIName() const
+{
+    if (m_goInfo)
+        return m_goInfo->AIName;
+
+    return "";
+}
+
 void GameObject::CleanupsBeforeDelete()
 {
     if (IsInWorld())
         RemoveFromWorld();
 
-    if (m_uint32Values)                                      // field array can be not exist if GameOBject not loaded
-    {
-        // Possible crash at access to deleted GO in Unit::m_gameobj
-        if (uint64 owner_guid = GetOwnerGUID())
-        {
-            Unit* owner = ObjectAccessor::GetUnit(*this, owner_guid);
-            if (owner)
-                owner->RemoveGameObject(this, false);
-            else
-            {
-                const char* ownerType = "creature";
-                if (IS_PLAYER_GUID(owner_guid))
-                    ownerType = "player";
-                else if (IS_PET_GUID(owner_guid))
-                    ownerType = "pet";
+    if (m_uint32Values)
+        RemoveFromOwner();
+}
 
-                sLog.outError("Delete GameObject (GUID: %u Entry: %u SpellId %u LinkedGO %u) that lost references to owner (GUID %u Type '%s') GO list. Crash possible later.",
-                              GetGUIDLow(), GetGOInfo()->id, m_spellId, GetGOInfo()->GetLinkedGameObjectEntry(), GUID_LOPART(owner_guid), ownerType);
-            }
-        }
+void GameObject::RemoveFromOwner()
+{
+    uint64 ownerGUID = GetOwnerGUID();
+
+    if (!ownerGUID)
+        return;
+
+    if (Unit* owner = ObjectAccessor::GetUnit(*this, ownerGUID))
+    {
+        owner->RemoveGameObject(this, false);
+        ASSERT(!GetOwnerGUID());
+        return;
     }
+    SetOwnerGUID(0);
 }
 
 void GameObject::AddToWorld()
@@ -146,14 +153,7 @@ void GameObject::RemoveFromWorld()
         if (m_zoneScript)
             m_zoneScript->OnGameObjectCreate(this, false);
 
-        // Possible crash at access to deleted GO in Unit::m_gameobj
-        if (uint64 owner_guid = GetOwnerGUID())
-        {
-            if (Unit* owner = GetOwner())
-                owner->RemoveGameObject(this, false);
-            else
-                sLog.outError("Delete GameObject (GUID: %u Entry: %u) that has references in invalid creature %u GO list. Crash possible.", GetGUIDLow(), GetGOInfo()->id, GUID_LOPART(owner_guid));
-        }
+        RemoveFromOwner();
 
         if (m_model)
             if (GetMap()->Contains(*m_model))
@@ -163,13 +163,12 @@ void GameObject::RemoveFromWorld()
     }
 }
 
-bool GameObject::Create(uint32 guidlow, uint32 name_id, Map* map, uint32 phaseMask, float x, float y, float z, float ang, float rotation0, float rotation1, float rotation2, float rotation3, uint32 animprogress, GOState go_state, uint32 artKit)
+bool GameObject::Create(uint32 guidlow, uint32 name_id, Map* map, float x, float y, float z, float ang, float rotation0, float rotation1, float rotation2, float rotation3, uint32 animprogress, GOState go_state, uint32 artKit)
 {
     ASSERT(map);
     SetMap(map);
 
     Relocate(x, y, z, ang);
-
     if (!IsPositionValid())
     {
         sLog.outError("Gameobject (GUID: %u Entry: %u) not created. Suggested coordinates isn't valid (X: %f Y: %f)", guidlow, name_id, x, y);
@@ -193,7 +192,6 @@ bool GameObject::Create(uint32 guidlow, uint32 name_id, Map* map, uint32 phaseMa
         return false;
     }
 
-    SetPhaseMask(phaseMask, false);
     SetFloatValue(GAMEOBJECT_POS_X, x);
     SetFloatValue(GAMEOBJECT_POS_Y, y);
     SetFloatValue(GAMEOBJECT_POS_Z, z);
@@ -223,10 +221,6 @@ bool GameObject::Create(uint32 guidlow, uint32 name_id, Map* map, uint32 phaseMa
     SetZoneScript();
 
     AIM_Initialize();
-
-    // Check if GameObject is Large
-    if (goinfo->IsLargeGameObject())
-        SetVisibilityDistanceOverride(VISDIST_LARGE);
 
     return true;
 }
@@ -386,7 +380,7 @@ void GameObject::Update(uint32 diff)
                     {
                         // Hunter trap: Search units which are unfriendly to the trap's owner
                         Oregon::AnyUnfriendlyNoTotemUnitInObjectRangeCheck checker(this, owner, radius);
-                        Oregon::UnitSearcher<Oregon::AnyUnfriendlyNoTotemUnitInObjectRangeCheck> searcher(this, ok, checker);
+                        Oregon::UnitSearcher<Oregon::AnyUnfriendlyNoTotemUnitInObjectRangeCheck> searcher(ok, checker);
                         VisitNearbyGridObject(radius, searcher);
                         if (!ok)
                             VisitNearbyWorldObject(radius, searcher);
@@ -396,7 +390,7 @@ void GameObject::Update(uint32 diff)
                         // Environmental trap: Any player
                         Player* player = NULL;
                         Oregon::AnyPlayerInObjectRangeCheck checker(this, radius);
-                        Oregon::PlayerSearcher<Oregon::AnyPlayerInObjectRangeCheck> searcher(this, player, checker);
+                        Oregon::PlayerSearcher<Oregon::AnyPlayerInObjectRangeCheck> searcher(player, checker);
                         VisitNearbyWorldObject(radius, searcher);
                         ok = player;
                     }
@@ -502,21 +496,12 @@ void GameObject::Update(uint32 diff)
             //! The GetOwnerGUID() check is mostly for compatibility with hacky scripts - 99% of the time summoning should be done trough spells.
             if (GetSpellId() || GetOwnerGUID())
             {
-                //Don't delete spell spawned chests, which are not consumed on loot
-                if (m_respawnTime > 0 && GetGoType() == GAMEOBJECT_TYPE_CHEST && !GetGOInfo()->IsDespawnAtAction())
-                {
-                    UpdateObjectVisibility();
-                    SetLootState(GO_READY);
-                }
-                else
-                {
-                    SetRespawnTime(0);
-                    Delete();
-                }
+                SetRespawnTime(0);
+                Delete();
                 return;
             }
 
-            SetLootState(GO_NOT_READY);
+            SetLootState(GO_READY);
 
             //burning flags in some battlegrounds, if you find better condition, just add it
             if (GetGOInfo()->IsDespawnAtAction() || GetGoAnimProgress() > 0)
@@ -539,7 +524,7 @@ void GameObject::Update(uint32 diff)
             if (!m_spawnedByDefault)
             {
                 m_respawnTime = 0;
-                Delete();
+                UpdateObjectVisibility();
                 return;
             }
 
@@ -615,10 +600,10 @@ void GameObject::SaveToDB()
         return;
     }
 
-    SaveToDB(GetMapId(), data->spawnMask, data->phaseMask);
+    SaveToDB(GetMapId(), data->spawnMask);
 }
 
-void GameObject::SaveToDB(uint32 mapid, uint8 spawnMask, uint32 phaseMask)
+void GameObject::SaveToDB(uint32 mapid, uint8 spawnMask)
 {
     const GameObjectInfo* goI = GetGOInfo();
 
@@ -633,10 +618,6 @@ void GameObject::SaveToDB(uint32 mapid, uint8 spawnMask, uint32 phaseMask)
     // data->guid = guid don't must be update at save
     data.id = GetEntry();
     data.mapid = mapid;
-    data.zoneId = GetZoneId();
-    data.areaId = GetAreaId();
-    data.spawnMask = spawnMask;
-    data.phaseMask = phaseMask;
     data.posX = GetFloatValue(GAMEOBJECT_POS_X);
     data.posY = GetFloatValue(GAMEOBJECT_POS_Y);
     data.posZ = GetFloatValue(GAMEOBJECT_POS_Z);
@@ -655,10 +636,7 @@ void GameObject::SaveToDB(uint32 mapid, uint8 spawnMask, uint32 phaseMask)
        << m_DBTableGuid << ", "
        << GetUInt32Value(OBJECT_FIELD_ENTRY) << ", "
        << mapid << ", "
-       << (uint32)GetZoneId() << ", "
-       << (uint32)GetAreaId() << ", "
        << (uint32)spawnMask << ", "
-       << (uint32)phaseMask << ", "
        << GetFloatValue(GAMEOBJECT_POS_X) << ", "
        << GetFloatValue(GAMEOBJECT_POS_Y) << ", "
        << GetFloatValue(GAMEOBJECT_POS_Z) << ", "
@@ -669,12 +647,15 @@ void GameObject::SaveToDB(uint32 mapid, uint8 spawnMask, uint32 phaseMask)
        << GetFloatValue(GAMEOBJECT_ROTATION + 3) << ", "
        << m_respawnDelayTime << ", "
        << uint32(GetGoAnimProgress()) << ", "
-       << uint32(GetGoState()) << ")";
+       << uint32(GetGoState()) << ");";
 
     WorldDatabase.BeginTransaction();
     WorldDatabase.PExecuteLog("DELETE FROM gameobject WHERE guid = '%u'", m_DBTableGuid);
     WorldDatabase.PExecuteLog("%s", ss.str().c_str());
     WorldDatabase.CommitTransaction();
+
+    if (sWorld.getConfig(CONFIG_CREATEUPDATE_FILE))
+        sLog.CreateUpdateFile(ss.str().c_str());
 }
 
 bool GameObject::LoadGameObjectFromDB(uint32 guid, Map* map, bool addToMap)
@@ -689,7 +670,6 @@ bool GameObject::LoadGameObjectFromDB(uint32 guid, Map* map, bool addToMap)
 
     uint32 entry = data->id;
     //uint32 map_id = data->mapid;
-    uint32 phaseMask = data->phaseMask;
     float x = data->posX;
     float y = data->posY;
     float z = data->posZ;
@@ -707,7 +687,7 @@ bool GameObject::LoadGameObjectFromDB(uint32 guid, Map* map, bool addToMap)
     m_DBTableGuid = guid;
     if (map->GetInstanceId() != 0) guid = sObjectMgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT);
 
-    if (!Create(guid, entry, map, phaseMask, x, y, z, ang, rotation0, rotation1, rotation2, rotation3, animprogress, go_state, artKit))
+    if (!Create(guid, entry, map, x, y, z, ang, rotation0, rotation1, rotation2, rotation3, animprogress, go_state, artKit))
         return false;
 
     if (data->spawntimesecs >= 0)
@@ -752,8 +732,17 @@ void GameObject::DeleteFromDB()
 {
     sObjectMgr.SaveGORespawnTime(m_DBTableGuid, GetInstanceId(), 0);
     sObjectMgr.DeleteGOData(m_DBTableGuid);
+
+    std::ostringstream ss;
+
+    ss << "DELETE FROM game_object WHERE guid = " << m_DBTableGuid << "; \n" <<
+        "DELETE FROM game_event_gameobject WHERE guid = " << m_DBTableGuid << ";";
+
     WorldDatabase.PExecuteLog("DELETE FROM gameobject WHERE guid = '%u'", m_DBTableGuid);
     WorldDatabase.PExecuteLog("DELETE FROM game_event_gameobject WHERE guid = '%u'", m_DBTableGuid);
+
+    if (sWorld.getConfig(CONFIG_CREATEUPDATE_FILE))
+        sLog.CreateUpdateFile(ss.str().c_str());
 }
 
 GameObject* GameObject::GetGameObject(WorldObject& object, uint64 guid)
@@ -931,7 +920,7 @@ void GameObject::TriggeringLinkedGameObject(uint32 trapEntry, Unit* target)
         Cell cell(p);
 
         Oregon::NearestGameObjectEntryInObjectRangeCheck go_check(*target, trapEntry, range);
-        Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectEntryInObjectRangeCheck> checker(target, trapGO, go_check);
+        Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectEntryInObjectRangeCheck> checker(trapGO, go_check);
 
         TypeContainerVisitor<Oregon::GameObjectLastSearcher<Oregon::NearestGameObjectEntryInObjectRangeCheck>, GridTypeMapContainer > object_checker(checker);
         cell.Visit(p, object_checker, *GetMap(), *target, range);
@@ -950,7 +939,7 @@ GameObject* GameObject::LookupFishingHoleAround(float range)
     CellCoord p(Oregon::ComputeCellCoord(GetPositionX(), GetPositionY()));
     Cell cell(p);
     Oregon::NearestGameObjectFishingHole u_check(*this, range);
-    Oregon::GameObjectSearcher<Oregon::NearestGameObjectFishingHole> checker(this, ok, u_check);
+    Oregon::GameObjectSearcher<Oregon::NearestGameObjectFishingHole> checker(ok, u_check);
 
     TypeContainerVisitor<Oregon::GameObjectSearcher<Oregon::NearestGameObjectFishingHole>, GridTypeMapContainer > grid_object_checker(checker);
     cell.Visit(p, grid_object_checker, *GetMap(), *this, range);
@@ -1597,13 +1586,6 @@ void GameObject::UpdateRotationFields(float rotation2 /*=0.0f*/, float rotation3
     SetFloatValue(GAMEOBJECT_ROTATION+3, rotation3);
 }
 
-std::string GameObject::GetAIName() const
-{
-    if (m_goInfo)
-        return m_goInfo->AIName;
-
-    return "";
-}
 
 void GameObject::SetGoState(GOState state)
 {
@@ -1656,11 +1638,6 @@ void GameObject::SetDisplayId(uint32 displayid)
 {
     SetUInt32Value(GAMEOBJECT_DISPLAYID, displayid);
     UpdateModel();
-}
-
-void GameObject::SetPhaseMask(uint32 newPhaseMask, bool update)
-{
-    WorldObject::SetPhaseMask(newPhaseMask, update);
 }
 
 void GameObject::EnableCollision(bool enable)

@@ -1,0 +1,4 @@
+ALTER TABLE `creature`
+ ADD COLUMN `npcflag` INT(10) UNSIGNED NOT NULL DEFAULT '0' AFTER `MovementType`,
+ ADD COLUMN `unit_flags` INT(10) UNSIGNED NOT NULL DEFAULT '0' AFTER `npcflag`,
+ ADD COLUMN `dynamicflags` INT(10) UNSIGNED NOT NULL DEFAULT '0' AFTER `unit_flags`;

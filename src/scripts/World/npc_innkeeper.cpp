@@ -12,7 +12,7 @@
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>.
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* ScriptData
@@ -33,8 +33,8 @@ EndScriptData */
 
 #define LOCALE_TRICK_OR_TREAT_0 "Trick or Treat!"
 #define LOCALE_TRICK_OR_TREAT_2 "Des bonbons ou des blagues!"
-#define LOCALE_TRICK_OR_TREAT_3 "Sï¿½ï¿½es oder Saures!"
-#define LOCALE_TRICK_OR_TREAT_6 "ï¿½Truco o trato!"
+#define LOCALE_TRICK_OR_TREAT_3 "Süßes oder Saures!"
+#define LOCALE_TRICK_OR_TREAT_6 "¡Truco o trato!"
 
 bool isEventActive()
 {
@@ -46,7 +46,7 @@ bool GossipHello_npc_innkeeper(Player* pPlayer, Creature* pCreature)
 
     pPlayer->TalkedToCreature(pCreature->GetEntry(), pCreature->GetGUID());
 
-    pPlayer->PrepareGossipMenu(pCreature, 0, true); //send innkeeper menu too
+    pPlayer->PrepareGossipMenu(pCreature, 0); //send innkeeper menu too
 
     if (isEventActive() && !pPlayer->HasAura(SPELL_TRICK_OR_TREATED, 0))
     {
@@ -127,7 +127,7 @@ bool GossipSelect_npc_innkeeper(Player* pPlayer, Creature* pCreature, uint32 /*u
         pPlayer->SEND_VENDORLIST(pCreature->GetGUID());
     else if (uiAction == GOSSIP_OPTION_INNKEEPER)
     {
-        pPlayer->PlayerTalkClass->SendCloseGossip();
+        pPlayer->PlayerTalkClass->CloseGossip();
         pPlayer->SetBindPoint(pCreature->GetGUID());
     }
 
