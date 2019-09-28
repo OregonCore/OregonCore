@@ -1115,6 +1115,28 @@ uint32 Unit::DealDamage(Unit* victim, uint32 damage, CleanDamage const* cleanDam
 
         victim->ModifyHealth(-(int32)damage);
 
+        if (Creature* creature = victim->ToCreature())
+        {
+            //Check if we have decreased movement aura
+            if (creature->HasAuraType(SPELL_AURA_MOD_DECREASE_SPEED))
+                return false;
+
+            // Pets should not effect this
+            if (creature->IsPet())
+                return false;
+
+            // Should not work on dungeon creatures or world bosses
+            if (creature->GetMap()->IsDungeon() || creature->isWorldBoss())
+                return false;
+
+            // dont allow movement speed less than walk
+            if (creature->GetSpeed(MOVE_RUN) < creature->GetSpeed(MOVE_WALK))
+                return false;
+
+            if (creature->GetHealthPct() <= 20.0f)
+                creature->SetSpeed(MOVE_RUN, creature->GetHealthPct() / 50.0f, false);
+        }
+
         if (damagetype == DIRECT_DAMAGE || damagetype == SPELL_DIRECT_DAMAGE)
         {
             victim->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_DIRECT_DAMAGE, spellProto ? spellProto->Id : 0);
