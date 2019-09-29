@@ -65,8 +65,8 @@ if (isset($_POST["register"])) {
 	}
 
 	//there is a bug idk i have to fix it ....
-	$hash = sha1($username.':'.$password);
-	
+	$hash = sha1(strtoupper($username) . ':' . strtoupper($password));
+  
     if (empty($username_err) && empty($password_err) && empty($email_err)) {
         
         $sql = "INSERT INTO account (username, sha_pass_hash, email, expansion) VALUES (:username, :password, :email, 2)";
@@ -168,5 +168,6 @@ if (isset($_POST["register"])) {
 	<script src="static/js/bootadmin.min.js"></script>
 
 </body>
+
 
 </html>
