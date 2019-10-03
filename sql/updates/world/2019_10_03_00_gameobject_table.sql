@@ -1,2 +1,2 @@
-ALTER TABLE "gameobject" DROP "zoneId";
-ALTER TABLE "gameobject" DROP "areaId";
+ALTER TABLE gameobject DROP COLUMN zoneId;
+ALTER TABLE gameobject DROP COLUMN areaId;
