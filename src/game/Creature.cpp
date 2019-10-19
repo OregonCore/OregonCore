@@ -1642,7 +1642,6 @@ void Creature::setDeathState(DeathState s)
             RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
 
             SetMeleeDamageSchool(SpellSchools(cinfo->dmgschool));
-            SetSpeed(MOVE_RUN, cinfo->speed_run, false);
         }
 
         Unit::setDeathState(ALIVE);

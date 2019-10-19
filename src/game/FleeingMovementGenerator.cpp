@@ -33,13 +33,8 @@ void FleeingMovementGenerator<T>::_setTargetLocation(T& owner)
     if (owner.HasUnitState(UNIT_STATE_ROOT | UNIT_STATE_STUNNED))
         return;
 
-    if (owner.HasUnitState(UNIT_STATE_CASTING) && !owner.CanMoveDuringChannel())
-    {
-        owner.CastStop();
-        return;
-    }
-
     float x, y, z;
+
     _getPoint(owner, x, y, z);
 
     // Add LOS check for target point
@@ -68,10 +63,9 @@ void FleeingMovementGenerator<T>::_setTargetLocation(T& owner)
     }
 
     Movement::MoveSplineInit init(owner);
-    init.MovebyPath(path.getFullPath());
+    init.MoveTo(x, y, z);
     init.SetWalk(false);
-    int32 traveltime = init.Launch();
-    i_nextCheckTime.Reset(traveltime + urand(500, 1000));
+    init.Launch();
 }
 
 template<class T>
@@ -84,29 +78,29 @@ void FleeingMovementGenerator<T>::_getPoint(T& owner, float& x, float& y, float&
         if (dist_from_caster > 0.2f)
             angle_to_caster = fright->GetAngle(&owner);
         else
-            angle_to_caster = frand(0, 2 * static_cast<float>(M_PI));
+            angle_to_caster = (float)frand(0, 2 * static_cast<float>(M_PI));
     }
     else
     {
         dist_from_caster = 0.0f;
-        angle_to_caster = frand(0, 2 * static_cast<float>(M_PI));
+        angle_to_caster = (float)frand(0, 2 * static_cast<float>(M_PI));
     }
 
     float dist, angle;
     if (dist_from_caster < MIN_QUIET_DISTANCE)
     {
-        dist = frand(0.4f, 1.3f)*(MIN_QUIET_DISTANCE - dist_from_caster);
-        angle = angle_to_caster + frand(-static_cast<float>(M_PI) / 8, static_cast<float>(M_PI) / 8);
+        dist = (float)frand(0.4f, 1.3f)*(MIN_QUIET_DISTANCE - dist_from_caster);
+        angle = angle_to_caster + (float)frand(-static_cast<float>(M_PI) / 8, static_cast<float>(M_PI) / 8);
     }
     else if (dist_from_caster > MAX_QUIET_DISTANCE)
     {
-        dist = frand(0.4f, 1.0f)*(MAX_QUIET_DISTANCE - MIN_QUIET_DISTANCE);
-        angle = -angle_to_caster + frand(-static_cast<float>(M_PI) / 4, static_cast<float>(M_PI) / 4);
+        dist = (float)frand(0.4f, 1.0f)*(MAX_QUIET_DISTANCE - MIN_QUIET_DISTANCE);
+        angle = -angle_to_caster + (float)frand(-static_cast<float>(M_PI) / 4, static_cast<float>(M_PI) / 4);
     }
     else    // we are inside quiet range
     {
-        dist = frand(0.6f, 1.2f)*(MAX_QUIET_DISTANCE - MIN_QUIET_DISTANCE);
-        angle = frand(0, 2 * static_cast<float>(M_PI));
+        dist = (float)frand(0.6f, 1.2f)*(MAX_QUIET_DISTANCE - MIN_QUIET_DISTANCE);
+        angle = (float)frand(0, 2 * static_cast<float>(M_PI));
     }
 
     Position pos = owner.GetFirstCollisionPosition(dist, angle);

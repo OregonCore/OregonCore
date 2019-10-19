@@ -1631,7 +1631,7 @@ float Map::GetHeight(float x, float y, float z, bool checkVMap, float maxSearchD
 
             // we are already under the surface or vmap height above map heigt
             // or if the distance of the vmap height is less the land height distance
-            if (vmapHeight > mapHeight || std::fabs(mapHeight - z) > std::fabs(vmapHeight - z))
+            if (vmapHeight > mapHeight || fabs(mapHeight - z) > fabs(vmapHeight - z))
                 realHeight = vmapHeight;
             else
                 realHeight = mapHeight;                           // better use .map surface height
@@ -1640,7 +1640,15 @@ float Map::GetHeight(float x, float y, float z, bool checkVMap, float maxSearchD
             realHeight = vmapHeight;                              // we have only vmapHeight (if have)
     }
 
-    return std::max<float>(realHeight, m_dyn_tree.getHeight(x, y, z, maxSearchDist));
+    return realHeight;
+}
+
+float Map::GetGridHeight(float x, float y) const
+{
+    if (GridMap* gmap = const_cast<Map*>(this)->GetGrid(x, y))
+        return gmap->getHeight(x, y);
+
+    return VMAP_INVALID_HEIGHT_VALUE;
 }
 
 inline bool IsOutdoorWMO(uint32 mogpFlags, uint32 mapId)

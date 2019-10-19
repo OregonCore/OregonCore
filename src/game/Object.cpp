@@ -2511,9 +2511,11 @@ void WorldObject::MovePosition(Position& pos, float dist, float angle)
 void WorldObject::MovePositionToFirstCollision(Position& pos, float dist, float angle)
 {
     angle += GetOrientation();
-    float destx, desty, destz;
+    float destx, desty, destz, ground, floor;
+    pos.m_positionZ += 2.0f;
     destx = pos.m_positionX + dist * cos(angle);
     desty = pos.m_positionY + dist * sin(angle);
+    destz = pos.GetPositionZ();
 
     // Prevent invalid coordinates here, position is unchanged
     if (!Oregon::IsValidMapCoord(destx, desty))
@@ -2528,9 +2530,12 @@ void WorldObject::MovePositionToFirstCollision(Position& pos, float dist, float 
     // collision occured
     if (col)
     {
-        // move back a bit
-        destx -= CONTACT_DISTANCE * cos(angle);
-        desty -= CONTACT_DISTANCE * sin(angle);
+        if (pos.GetExactDist2d(destx, desty) > CONTACT_DISTANCE)
+        {
+            // move back a bit
+            destx -= CONTACT_DISTANCE * cos(angle);
+            desty -= CONTACT_DISTANCE * sin(angle);
+        }
         dist = sqrt((pos.m_positionX - destx) * (pos.m_positionX - destx) + (pos.m_positionY - desty) * (pos.m_positionY - desty));
     }
 
@@ -2540,33 +2545,53 @@ void WorldObject::MovePositionToFirstCollision(Position& pos, float dist, float 
     // Collided with a gameobject
     if (col)
     {
-        destx -= CONTACT_DISTANCE * cos(angle);
-        desty -= CONTACT_DISTANCE * sin(angle);
+        if (pos.GetExactDist2d(destx, desty) > CONTACT_DISTANCE)
+        {
+            destx -= CONTACT_DISTANCE * cos(angle);
+            desty -= CONTACT_DISTANCE * sin(angle);
+        }
         dist = sqrt((pos.m_positionX - destx) * (pos.m_positionX - destx) + (pos.m_positionY - desty) * (pos.m_positionY - desty));
     }
+
+    float prevdx = destx, prevdy = desty, prevdz = destz;
+    bool anyvalid = false;
+    ground = GetMap()->GetHeight(destx, desty, MAX_HEIGHT, true);
+    floor = GetMap()->GetHeight(destx, desty, pos.m_positionZ, true);
+    destz = fabs(ground - pos.m_positionZ) <= fabs(floor - pos.m_positionZ) ? ground : floor;
 
     float step = dist / 10.0f;
 
     for (uint8 j = 0; j < 10; ++j)
     {
         // do not allow too big z changes
-        if (fabs(pos.m_positionZ - destz) > 6.0f)
+        if (fabs(pos.m_positionZ - destz) > 4.0f)
         {
             destx -= step * cos(angle);
             desty -= step * sin(angle);
-            destz = GetPositionZTarget(pos, destx, desty);
+            ground = GetMap()->GetHeight(destx, desty, MAX_HEIGHT, true);
+            floor = GetMap()->GetHeight(destx, desty, pos.m_positionZ, true);
+            destz = fabs(ground - pos.m_positionZ) <= fabs(floor - pos.m_positionZ) ? ground : floor;
+            if (j == 9 && fabs(pos.m_positionZ - destz) <= 4.0f)
+                anyvalid = true;
         }
         // we have correct destz now
         else
         {
-            pos.Relocate(destx, desty, destz);
+            anyvalid = true;
             break;
         }
     }
 
-    Oregon::NormalizeMapCoord(pos.m_positionX);
-    Oregon::NormalizeMapCoord(pos.m_positionY);
-    pos.m_positionZ = GetPositionZTarget(pos, destx, desty);
+    if (!anyvalid)
+    {
+        destx = prevdx;
+        desty = prevdy;
+        destz = prevdz;
+    }
+
+    Oregon::NormalizeMapCoord(destx);
+    Oregon::NormalizeMapCoord(desty);
+    pos.Relocate(destx, desty, destz);
     pos.SetOrientation(GetOrientation());
 }
 
