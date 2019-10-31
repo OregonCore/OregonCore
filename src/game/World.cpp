@@ -2488,6 +2488,13 @@ void World::SendAutoBroadcast()
     sLog.outString("AutoBroadcast: '%s'", msg.c_str());
 }
 
+void World::InvalidatePlayerDataToAllClient(uint64 guid) const
+{
+    WorldPacket data(SMSG_INVALIDATE_PLAYER, 8);
+    data << guid;
+    sWorld.SendGlobalMessage(&data);
+}
+
 void World::InitResultQueue()
 {
     m_resultQueue = new SqlResultQueue;

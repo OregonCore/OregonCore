@@ -469,7 +469,8 @@ class World
         WorldSession* FindSession(uint32 id) const;
         void AddSession(WorldSession* s);
         void SendAutoBroadcast();
-        bool RemoveSession(uint32 id);
+        void InvalidatePlayerDataToAllClient(uint64 guid) const;
+        bool RemoveSession(uint32 id); 
         // Get the number of current active sessions
         void UpdateMaxSessionCounters();
         const SessionMap& GetAllSessions() const { return m_sessions; }
