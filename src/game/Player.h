@@ -2107,6 +2107,12 @@ class Player : public Unit, public GridObject<Player>
         void CheckAreaExploreAndOutdoor(void);
 
         static uint32 TeamForRace(uint8 race);
+
+        uint32 SetTeam(uint32 team) const
+        {
+           return m_team == team;
+        }
+
         uint32 GetTeam() const
         {
             return m_team;
