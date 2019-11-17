@@ -1072,31 +1072,21 @@ CreatureAI* GetAI_npc_maghar_prisoner(Creature* pCreature)
 
 bool GOHello_maghar_prison(Player* pPlayer, GameObject* pGo)
 {
-    if (pPlayer->GetQuestStatus(QUEST_SURVIVORS) == QUEST_STATUS_INCOMPLETE)
+
+    pGo->UseDoorOrButton();
+    if (pPlayer->GetQuestStatus(QUEST_SURVIVORS) != QUEST_STATUS_INCOMPLETE)
+        return false;
+
+    if (Creature* pPrisoner = pGo->FindNearestCreature(NPC_MPRISONER, 5, true))
     {
-        if (Creature* pPrisoner = pGo->FindNearestCreature(NPC_MPRISONER, 5, true))
-        {
-            pPlayer->KilledMonsterCredit(NPC_MPRISONER, pPrisoner->GetGUID());
+        CAST_PLR(pPlayer)->KilledMonsterCredit(NPC_MPRISONER, 0);
 
-            switch (urand(0, 3))
-            {
-            case 0:
-                DoScriptText(SAYT_MAG_PRISONER1, pPrisoner, pPlayer);
-                break;
-            case 1:
-                DoScriptText(SAYT_MAG_PRISONER2, pPrisoner, pPlayer);
-                break;
-            case 2:
-                DoScriptText(SAYT_MAG_PRISONER3, pPrisoner, pPlayer);
-                break;
-            case 3:
-                DoScriptText(SAYT_MAG_PRISONER4, pPrisoner, pPlayer);
-                break;
-            }
+        DoScriptText(RAND(SAYT_MAG_PRISONER1, SAYT_MAG_PRISONER2, SAYT_MAG_PRISONER3, SAYT_MAG_PRISONER4), pPrisoner, pPlayer);
 
-            if (npc_maghar_prisonerAI* pEscortAI = CAST_AI(npc_maghar_prisonerAI, pPrisoner->AI()))
-                pEscortAI->StartRun(pPlayer);
-        }
+        if (npc_maghar_prisonerAI* pEscortAI = CAST_AI(npc_maghar_prisonerAI, pPrisoner->AI()))
+            pEscortAI->StartRun(pPlayer);
+
+        return true;
     }
     return false;
 };
