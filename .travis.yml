@@ -41,9 +41,9 @@ script:
   - mysql -u oregon -poregon realmd < base/realmd.sql
   - mysql -u oregon -poregon characters < base/characters.sql
   # mysql -u oregon -poregon world < base/world.sql
-  - curl -L --retry 3 -o database_05_07_19.zip https://github.com/talamortis/OregonCore/releases/download/v1.0/database_05_07_19.zip
-  - unzip database_05_07_19.zip
-  - mysql -u oregon -poregon world < database_05_07_19.sql
+  - curl -L --retry 3 -o database_17_11_19.zip https://github.com/talamortis/OregonCore/releases/download/v1.0/database_17_17_19.zip
+  - unzip database_17_11_19.zip
+  - mysql -u oregon -poregon world < database_17_11_19.sql
   - cat updates/realmd/*.sql | mysql -u oregon -poregon realmd
   - cat updates/characters/*.sql | mysql -u oregon -poregon characters
   - cat updates/world/*.sql | mysql -u oregon -poregon world
