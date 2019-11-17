@@ -157,16 +157,15 @@ namespace Movement
         if (generatePath)
         {
             PathInfo path(&unit);
-            bool result = path.Update(dest.x, dest.y, dest.z, forceDestination);
-            if (result && !(path.getPathType() && PATHFIND_NOPATH))
-            {
-                MovebyPath(path.getFullPath());
-                return;
-            }
-        }
+            path.Update(dest.x, dest.y, dest.z, forceDestination);
+            MovebyPath(path.getFullPath());
 
-        args.path_Idx_offset = 0;
-        args.path.resize(2);
-        args.path[1] = dest;
+        }
+        else
+        {
+            args.path_Idx_offset = 0;
+            args.path.resize(2);
+            args.path[1] = dest;
+        }
     }
 }
