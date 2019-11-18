@@ -95,7 +95,7 @@ struct npc_aged_dying_ancient_kodoAI : public ScriptedAI
             if (!me->GetVictim() && me->IsAlive())
             {
                 Reset();
-                me->setDeathState(JUST_DIED);
+                me->DisappearAndDie(true);
                 me->Respawn();
                 return;
             }
@@ -123,6 +123,7 @@ bool EffectDummyCreature_npc_aged_dying_ancient_kodo(Unit* pCaster, uint32 spell
             pCaster->CastSpell(pCaster, SPELL_KODO_KOMBO_PLAYER_BUFF, true);
 
             pCreatureTarget->UpdateEntry(NPC_TAMED_KODO);
+            pCreatureTarget->SetFaction(35);
             pCreatureTarget->CastSpell(pCreatureTarget, SPELL_KODO_KOMBO_DESPAWN_BUFF, false);
 
             if (pCreatureTarget->GetMotionMaster()->GetCurrentMovementGeneratorType() == WAYPOINT_MOTION_TYPE)
