@@ -89,18 +89,17 @@ struct instance_mechanar : public ScriptedInstance
         }
     }
 
-    void OnCreatureCreate(Creature* creature)
+    void OnCreatureCreate(Creature* pCreature, bool /*add*/)
     {
-        if (creature->GetEntry() == NPC_PATHALEON_THE_CALCULATOR)
-            _pathaleonGUID = creature->GetGUID();
+        if (pCreature->GetEntry() == NPC_PATHALEON_THE_CALCULATOR)
+            _pathaleonGUID = pCreature->GetGUID();
     }
 
-    void OnUnitDeath(Unit* unit)
+    void OnCreatureDeath(Creature* pCreature)
     {
-        if (unit->GetTypeId() == TYPEID_UNIT)
             if (_passageEncounter > ENCOUNTER_PASSAGE_NOT_STARTED && _passageEncounter < ENCOUNTER_PASSAGE_DONE)
-                if (_passageGUIDs.find(unit->GetGUID()) != _passageGUIDs.end())
-                    _passageGUIDs.erase(unit->GetGUID());
+                if (_passageGUIDs.find(pCreature->GetGUID()) != _passageGUIDs.end())
+                    _passageGUIDs.erase(pCreature->GetGUID());
 
     }
 
@@ -143,99 +142,68 @@ struct instance_mechanar : public ScriptedInstance
                     }
                 }
             }
-            if (_passageEncounter == ENCOUNTER_PASSAGE_PHASE1)
+
+            if (!_passageGUIDs.empty())
+                return;
+
+            if (_passageEncounter < ENCOUNTER_PASSAGE_PHASE3)
             {
-                if (!passagePhase1)
+                if (Player* player = GetPassagePlayer(250.0f))
                 {
-                    if (Player* player = GetPassagePlayer(250.0f))
+                    if (_passageEncounter == ENCOUNTER_PASSAGE_PHASE1)
                     {
-                        Position pos = { 190.92f, -23.5f, 24.88f, 0.0f };
+                        Position pos = { 214.37f, -23.5f, 24.88f, 0.0f };
                         if (Creature* creature = instance->SummonCreature(NPC_TEMPEST_KEEPER_DESTROYER, pos))
                             DoSummonAction(creature, player);
-                        
                     }
-                    _passageEncounter++;
-                    passagePhase1 = true;
-                }
-            }
-            if (_passageEncounter == ENCOUNTER_PASSAGE_PHASE2)
-            {
-                if (!passagePhase2)
-                {
-                    if (Player* player = GetPassagePlayer(250.0f))
+                    else if (_passageEncounter == ENCOUNTER_PASSAGE_PHASE2)
                     {
                         for (uint8 i = 0; i < 3; ++i)
                         {
-                            Position pos = { 146.61f, 3.03f + 2.5f*i, 24.88f, 5.30f };
+                            Position pos = { 199.76f, -26.0f + 2.5f*i, 24.88f, 0.0f };
                             if (Creature* creature = instance->SummonCreature(i == 1 ? NPC_SUNSEEKER_ENGINEER : NPC_BLOODWARDER_PHYSICIAN, pos))
                                 DoSummonAction(creature, player);
-                           
                         }
-                        _passageEncounter++;
-                        passagePhase2 = true;
                     }
+                    _passageEncounter++;
                 }
             }
-            if (_passageEncounter == ENCOUNTER_PASSAGE_PHASE3)
+            else
             {
-                if (!passagePhase3)
+                if (Player* player = GetPassagePlayer(148.0f))
                 {
-                    if (Player* player = GetPassagePlayer(148.0f))
+                    if (_passageEncounter == ENCOUNTER_PASSAGE_PHASE3)
                     {
                         for (uint8 i = 0; i < 3; ++i)
                         {
-                            Position pos = { 167.97f, -16.0f + 2.5f*i , 24.88f, 4.80f };
+                            Position pos = { 135.0f + 2.5f*i, 36.76f, 24.88f, M_PI*1.5f };
                             if (Creature* creature = instance->SummonCreature(i == 1 ? NPC_SUNSEEKER_ASTROMAGE : NPC_BLOODWARDER_PHYSICIAN, pos))
                                 DoSummonAction(creature, player);
                         }
-                        _passageEncounter++;
-                        passagePhase3 = true;
                     }
-                }
-            }
-            if (_passageEncounter == ENCOUNTER_PASSAGE_PHASE4)
-            {
-                if (!passagePhase4)
-                {
-                    if (Player* player = GetPassagePlayer(148.0f))
+                    else if (_passageEncounter == ENCOUNTER_PASSAGE_PHASE4)
                     {
-                        Position pos = { 137.65f, 29.9f + 2.5f , 24.88f, 4.70f };
+                        Position pos = { 137.62f, 62.23f, 24.88f, M_PI*1.5f };
                         if (Creature* creature = instance->SummonCreature(NPC_TEMPEST_KEEPER_DESTROYER, pos))
                             DoSummonAction(creature, player);
-
                     }
-                    _passageEncounter++;
-                    passagePhase4 = true;
-                }
-            }
-            if (_passageEncounter == ENCOUNTER_PASSAGE_PHASE5)
-            {
-                if (!passagePhase5)
-                {
-                    if (Player* player = GetPassagePlayer(148.0f))
+                    else if (_passageEncounter == ENCOUNTER_PASSAGE_PHASE5)
                     {
                         for (uint8 i = 0; i < 4; ++i)
                         {
-                            Position pos = { 133.0f + 3.5f*i, 92.88f, 26.38f, 4.6f };
+                            Position pos = { 133.0f + 3.5f*i, 92.88f, 26.38f, M_PI*1.5f };
                             if (Creature* creature = instance->SummonCreature(i == 1 || i == 2 ? NPC_SUNSEEKER_ASTROMAGE : NPC_SUNSEEKER_ENGINEER, pos))
                                 DoSummonAction(creature, player);
-
                         }
-                        _passageEncounter++;
-                        passagePhase5 = true;
                     }
+                    else if (_passageEncounter == ENCOUNTER_PASSAGE_PHASE6)
+                    {
+                        if (Creature* creature = instance->GetCreature(_pathaleonGUID))
+                            creature->AI()->DoAction(1);
+                    }
+                    _passageEncounter++;
                 }
             }
-            if (_passageEncounter == ENCOUNTER_PASSAGE_PHASE6)
-            {
-                if (!passagePhase6)
-                {
-                    if(Creature* creature = instance->GetCreature(_pathaleonGUID))
-                        creature->AI()->DoAction(1);
-                }
-            }
-            if (!_passageGUIDs.empty())
-                return;
         }
     }
 
