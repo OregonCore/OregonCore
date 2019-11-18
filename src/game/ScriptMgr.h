@@ -55,7 +55,7 @@ struct Script
         pQuestSelect(NULL), pQuestComplete(NULL), pNPCDialogStatus(NULL), pGODialogStatus(NULL),
         pChooseReward(NULL), pItemHello(NULL), pGOHello(NULL), pAreaTrigger(NULL),
         pGOQuestAccept(NULL), pGOSelect(NULL), pGOChooseReward(NULL), pGOSelectWithCode(NULL), pItemUse(NULL), pEffectDummyCreature(NULL),
-        GetAI(NULL), GetInstanceData(NULL), OnGivePlayerXP(NULL)
+        GetAI(NULL), GetInstanceData(NULL), OnGivePlayerXP(NULL), GoQuestComplete(NULL)
     {}
 
     std::string Name;
@@ -86,6 +86,7 @@ struct Script
     bool (*pGOSelectWithCode    )(Player*, GameObject*, uint32 , uint32 , const char*);
     bool (*pQuestSelect         )(Player*, Creature*, Quest const*);
     bool (*pQuestComplete       )(Player*, Creature*, Quest const*);
+    bool (*GoQuestComplete      )(Player*, GameObject*, Quest const*);
     uint32 (*pNPCDialogStatus   )(Player*, Creature*);
     uint32 (*pGODialogStatus    )(Player*, GameObject* _GO);
     bool (*pChooseReward        )(Player*, Creature*, Quest const*, uint32);
@@ -139,6 +140,7 @@ class ScriptMgr
         bool QuestAccept(Player* pPlayer, Creature* pCreature, Quest const* pQuest);
         bool QuestSelect(Player* pPlayer, Creature* pCreature, Quest const* pQuest);
         bool QuestComplete(Player* pPlayer, Creature* pCreature, Quest const* pQuest);
+        bool QuestComplete(Player* player, GameObject* pGo, Quest const* pQuest);
         bool ChooseReward(Player* pPlayer, Creature* pCreature, Quest const* pQuest, uint32 opt);
         uint32 NPCDialogStatus(Player* pPlayer, Creature* pCreature);
         uint32 GODialogStatus(Player* pPlayer, GameObject* pGO);

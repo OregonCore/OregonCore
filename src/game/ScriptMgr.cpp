@@ -414,6 +414,15 @@ bool ScriptMgr::QuestComplete(Player* pPlayer, Creature* pCreature, Quest const*
     return tmpscript->pQuestComplete(pPlayer, pCreature, pQuest);
 }
 
+bool ScriptMgr::QuestComplete(Player* player, GameObject* pGO, Quest const* pQuest)
+{
+    Script* tmpscript = m_scripts[pGO->GetGOInfo()->ScriptId];
+    if (!tmpscript || !tmpscript->GoQuestComplete) return false;
+
+    player->PlayerTalkClass->ClearMenus();
+    return tmpscript->GoQuestComplete(player, pGO, pQuest);
+}
+
 bool ScriptMgr::ChooseReward(Player* pPlayer, Creature* pCreature, Quest const* pQuest, uint32 opt)
 {
     Script* tmpscript = m_scripts[pCreature->GetScriptId()];

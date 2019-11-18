@@ -14299,6 +14299,9 @@ void Player::SendQuestReward(Quest const* pQuest, uint32 XP, Object* questGiver)
 
     if (questGiver->GetTypeId() == TYPEID_UNIT)
         sScriptMgr.QuestComplete(this, questGiver->ToCreature(), pQuest);
+    else
+        if (questGiver->GetTypeId() == TYPEID_GAMEOBJECT)
+            sScriptMgr.QuestComplete(this, questGiver->ToGameObject(), pQuest);
 
     WorldPacket data(SMSG_QUESTGIVER_QUEST_COMPLETE, (4 + 4 + 4 + 4 + 4 + 4 + pQuest->GetRewItemsCount() * 8));
     data << questid;
