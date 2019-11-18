@@ -403,7 +403,79 @@ bool GossipSelect_npc_theramore_guard(Player* pPlayer, Creature* pCreature, uint
 ## npc_lady_jaina_proudmoore
 ######*/
 
+enum Jaina_Text
+{
+    JAINA_EVENT1 = 1,
+    JAINA_EVENT2 = 2,
+    JAINA_EVENT3 = 3,
+    JAINA_EVENT4 = 4,
+    JAINA_EVENT5 = 5,
+    JAINA_EVENT6 = 6,
+    JAINA_EVENT_RESET = 7,
+
+    SAY_JAINA_1 = -1921943,
+    SAY_JAINA_2 = -1921944,
+    SAY_JAINA_3 = -1921945,
+    SAY_JAINA_4 = -1921946,
+    SAY_JAINA_5 = -1921947,
+    SAY_JAINA_6 = -1921948,
+};
+
 #define GOSSIP_ITEM_JAINA "I know this is rather silly but i have a young ward who is a bit shy and would like your autograph."
+
+struct  npc_jaina_proudmooreAI : public ScriptedAI
+{
+    npc_jaina_proudmooreAI(Creature* creature) : ScriptedAI(creature) {}
+
+    EventMap events;
+
+    void DoAction(int32 action)
+    {
+        events.ScheduleEvent(JAINA_EVENT1, 0);
+        events.ScheduleEvent(JAINA_EVENT2, 11000);
+        events.ScheduleEvent(JAINA_EVENT3, 21000);
+        events.ScheduleEvent(JAINA_EVENT4, 31500);
+        events.ScheduleEvent(JAINA_EVENT5, 39500);
+        events.ScheduleEvent(JAINA_EVENT6, 48000);
+        events.ScheduleEvent(JAINA_EVENT_RESET, 55000);
+    }
+
+    void UpdateAI(uint32 diff)
+    {
+        events.Update(diff);
+
+        switch (events.ExecuteEvent())
+        {
+        case JAINA_EVENT1:
+            me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP | UNIT_NPC_FLAG_QUESTGIVER);
+            DoScriptText(SAY_JAINA_1, me, nullptr);
+            break;
+        case JAINA_EVENT2:
+            DoScriptText(SAY_JAINA_2, me, nullptr);
+            break;
+        case JAINA_EVENT3:
+            DoScriptText(SAY_JAINA_3, me, nullptr);
+            break;
+        case JAINA_EVENT4:
+            DoScriptText(SAY_JAINA_4, me, nullptr);
+            break;
+        case JAINA_EVENT5:
+            DoScriptText(SAY_JAINA_5, me, nullptr);
+            break;
+        case JAINA_EVENT6:
+            DoScriptText(SAY_JAINA_6, me, nullptr);
+            break;
+        case JAINA_EVENT_RESET:
+            me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP | UNIT_NPC_FLAG_QUESTGIVER);
+            break;
+        }
+    }
+};
+
+CreatureAI* GetAI_npc_jaina_proudmooreAI(Creature* pCreature)
+{
+    return new npc_jaina_proudmooreAI(pCreature);
+}
 
 bool GossipHello_npc_lady_jaina_proudmoore(Player* player, Creature* pCreature)
 {
@@ -424,6 +496,42 @@ bool GossipSelect_npc_lady_jaina_proudmoore(Player* player, Creature* pCreature,
     {
         player->SEND_GOSSIP_MENU(7012, pCreature->GetGUID());
         player->CastSpell(player, 23122, false);
+    }
+    return true;
+}
+
+bool QuestComplete_npc_jaina_proudmoore(Player *player, Creature *pCreature, const Quest *_Quest)
+{
+    if (_Quest->GetQuestId() == 11142)
+        CAST_AI(npc_jaina_proudmooreAI, pCreature->AI())->DoAction(0);
+
+    pCreature->SetFacingToObject(player);
+
+    return true;
+}
+
+/*######
+## npc_cassa_crimsonwing
+######*/
+
+#define GOSSIP_SURVEY_ALCAZ_ISLAND "Lady Jaina told me to speak to you about using a Gryphon to survey Alcaz Island."
+#define QUEST_ALCAZ_ISLAND 11142
+
+bool GossipHello_npc_cassa_crimsonwing(Player* player, Creature* pCreature)
+{
+    if (player->GetQuestStatus(QUEST_ALCAZ_ISLAND) == QUEST_STATUS_INCOMPLETE)
+        player->ADD_GOSSIP_ITEM(0, GOSSIP_SURVEY_ALCAZ_ISLAND, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
+    return true;
+}
+
+bool GossipSelect_npc_cassa_crimsonwing(Player *player, Creature *pCreature, uint32 sender, uint32 action)
+{
+    if (action == GOSSIP_ACTION_INFO_DEF + 1)
+    {
+        player->CLOSE_GOSSIP_MENU();
+        pCreature->CastSpell(player, 42295, false);
     }
     return true;
 }
@@ -1394,8 +1502,10 @@ void AddSC_dustwallow_marsh()
 
     newscript = new Script;
     newscript->Name = "npc_lady_jaina_proudmoore";
+    newscript->GetAI = &GetAI_npc_jaina_proudmooreAI;
     newscript->pGossipHello = &GossipHello_npc_lady_jaina_proudmoore;
     newscript->pGossipSelect = &GossipSelect_npc_lady_jaina_proudmoore;
+    newscript->pQuestComplete = &QuestComplete_npc_jaina_proudmoore;
     newscript->RegisterSelf();
 
     newscript = new Script;
@@ -1441,6 +1551,12 @@ void AddSC_dustwallow_marsh()
     newscript = new Script;
     newscript->Name="npc_mottled_drywallow_crocolisk";
     newscript->GetAI = &GetAI_npc_mottled_drywallow_crocolisk;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_cassa_crimsonwing";
+    newscript->pGossipHello = &GossipHello_npc_cassa_crimsonwing;
+    newscript->pGossipSelect = &GossipSelect_npc_cassa_crimsonwing;
     newscript->RegisterSelf();
 }
 

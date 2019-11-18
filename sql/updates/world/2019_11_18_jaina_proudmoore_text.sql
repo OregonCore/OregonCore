@@ -1,0 +1,12 @@
+DELETE FROM `script_texts` WHERE `entry`=-1921943;
+INSERT INTO `script_texts` VALUES (-1921943, 'Perhaps i should explain...', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 7, 1, 'Jaina Proudmoore Survey Alcaz Island - SAY_JAINA_1');
+DELETE FROM `script_texts` WHERE `entry`=-1921944;
+INSERT INTO `script_texts` VALUES (-1921944, 'I had arranged for a secret summit between Warchief Thrall and King Wrynn, here in Theramore.', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 7, 1, 'Jaina Proudmoore Survey Alcaz Island - SAY_JAINA_2');
+DELETE FROM `script_texts` WHERE `entry`=-1921945;
+INSERT INTO `script_texts` VALUES (-1921945, 'The King was to travel here by ship, in secret. But the ship never arrived, and King Wrynn disappeared.', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 7, 1, 'Jaina Proudmoore Survey Alcaz Island - SAY_JAINA_3');
+DELETE FROM `script_texts` WHERE `entry`=-1921946;
+INSERT INTO `script_texts` VALUES (-1921946, 'Your help enabled us to connect the Defias to the mastermind behind the abduction. Onyxia, who was posing as a member of the royal court.', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 7, 1, 'Jaina Proudmoore Survey Alcaz Island - SAY_JAINA_4');
+DELETE FROM `script_texts` WHERE `entry`=-1921947;
+INSERT INTO `script_texts` VALUES (-1921947, 'Meanwhile, the king managed to escape his captors, and returned to Stormwind to heal with Onyxia.', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 7, 1, 'Jaina Proudmoore Survey Alcaz Island - SAY_JAINA_5');
+DELETE FROM `script_texts` WHERE `entry`=-1921948;
+INSERT INTO `script_texts` VALUES (-1921948, 'I will send word that you have discovered the link to the Defias. I was a fool to think them broken with the defeat of Edwin Van Cleef, and King Wrynn will want to make an example of all who remain.', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 7, 1, 'Jaina Proudmoore Survey Alcaz Island - SAY_JAINA_6');

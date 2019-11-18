@@ -2069,6 +2069,9 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
     {
         switch (GetId())
         {
+        case 42385:
+            m_target->ToPlayer()->ActivateTaxiPathTo(724);
+            return;
         case 31261:
         case 29266:
             m_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_UNK_29);
@@ -2227,6 +2230,9 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
 
         switch (GetId())
         {
+        case 42385: // Survey Alcaz Island
+            m_target->ToPlayer()->CompleteQuest(11142);
+            return;
         case 2584:                                     // Waiting to Resurrect
             {
                 // Waiting to resurrect spell cancel, we must remove player from resurrect queue
