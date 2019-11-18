@@ -721,11 +721,11 @@ struct npc_infused_crystalAI : public Scripted_NoMovementAI
     {
         if (EndTimer < diff && Progress)
         {
-            DoScriptText(EMOTE, me);
+            Player* player = ObjectAccessor::GetPlayer(*me, PlayerGUID);
+
+            DoScriptText(EMOTE, me, player );
             Completed = true;
-            if (PlayerGUID)
-                if (Player* pPlayer = Unit::GetPlayer(*me, PlayerGUID))
-                    CAST_PLR(pPlayer)->CompleteQuest(QUEST_POWERING_OUR_DEFENSES);
+            CAST_PLR(player)->KilledMonsterCredit(16364, 0);
 
             me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             me->RemoveCorpse();
