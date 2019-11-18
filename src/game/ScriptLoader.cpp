@@ -38,6 +38,7 @@ void AddSC_npc_innkeeper();
 void AddSC_npcs_special();
 
 //eastern kingdoms
+void AddSC_hillsbrad_foothills();
 void AddSC_alterac_valley();                 //Alterac Valley
 void AddSC_boss_balinda();
 void AddSC_boss_drekthar();
@@ -411,6 +412,7 @@ void AddScripts()
     AddSC_npcs_special();
 
     //eastern kingdoms
+    AddSC_hillsbrad_foothills();
     AddSC_alterac_valley();                 //Alterac Valley
     AddSC_boss_balinda();
     AddSC_boss_drekthar();
