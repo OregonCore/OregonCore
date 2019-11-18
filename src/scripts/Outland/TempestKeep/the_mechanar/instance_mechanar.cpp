@@ -58,17 +58,19 @@ struct instance_mechanar : public ScriptedInstance
         _pathaleonGUID = 0;
         _passageEncounter = 0;
         _passageTimer = 0;
+        _moarg2Door = 0;
         _passageGUIDs.clear();
     }
 
-    void OnGameObjectCreate(GameObject* gameObject)
+    void OnGameObjectCreate(GameObject* pGo, bool /*add*/)
     {
-        switch (gameObject->GetEntry())
+        switch (pGo->GetEntry())
         {
         case GO_DOOR_MOARG_1:
         case GO_DOOR_MOARG_2:
+            _moarg2Door = pGo->GetGUID();
         case GO_DOOR_NETHERMANCER:
-            AddDoor(gameObject, true);
+            AddDoor(pGo, true);
             break;
         default:
             break;
@@ -100,6 +102,10 @@ struct instance_mechanar : public ScriptedInstance
             if (_passageEncounter > ENCOUNTER_PASSAGE_NOT_STARTED && _passageEncounter < ENCOUNTER_PASSAGE_DONE)
                 if (_passageGUIDs.find(pCreature->GetGUID()) != _passageGUIDs.end())
                     _passageGUIDs.erase(pCreature->GetGUID());
+
+            if (pCreature->GetEntry() == 19219)
+                if (GameObject* pGo = instance->GetGameObject(_moarg2Door))
+                    pGo->SetGoState(GO_STATE_ACTIVE);
 
     }
 
@@ -263,6 +269,7 @@ struct instance_mechanar : public ScriptedInstance
     } 
 
 private:
+    uint64 _moarg2Door;
     uint64 _pathaleonGUID;
     uint32 _passageTimer;
     uint32 _passageEncounter;
