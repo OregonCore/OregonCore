@@ -1191,27 +1191,23 @@ enum
 
 bool GOHello_veil_skith_cage(Player* pPlayer, GameObject* pGo)
 {
+    std::list<Creature*>ChildList;
+    GetCreatureListWithEntryInGrid(ChildList, pGo, NPC_CAPTIVE_CHILD, 5.0f);
+
     if (pPlayer->GetQuestStatus(QUEST_MISSING_FRIENDS) == QUEST_STATUS_INCOMPLETE)
     {
-        if (Creature* pChild = pGo->FindNearestCreature( NPC_CAPTIVE_CHILD, 5, true))
+        if (ChildList.empty())
+            return false;
+
+        for (std::list<Creature*>::iterator it = ChildList.begin(); it != ChildList.end(); ++it)
         {
-            pPlayer->KilledMonsterCredit(NPC_CAPTIVE_CHILD, 0);
-
-            switch (urand(0, 2))
+            if (Creature* pChild = *it)
             {
-            case 0:
-                DoScriptText(SAY_THANKS_1, pChild);
-                break;
-            case 1:
-                DoScriptText(SAY_THANKS_2, pChild);
-                break;
-            case 2:
-                DoScriptText(SAY_THANKS_3, pChild);
-                break;
+                DoScriptText(RAND(SAY_THANKS_1, SAY_THANKS_2, SAY_THANKS_3), pChild);
+                pChild->GetMotionMaster()->Clear();
+                pChild->GetMotionMaster()->MovePoint(0, -2648.049f, 5274.573f, 1.691529f);
+                pPlayer->KilledMonsterCredit(NPC_CAPTIVE_CHILD, 0);
             }
-
-            pChild->GetMotionMaster()->Clear();
-            pChild->GetMotionMaster()->MovePoint(0, -2648.049f, 5274.573f, 1.691529f);
         }
     }
     return false;
